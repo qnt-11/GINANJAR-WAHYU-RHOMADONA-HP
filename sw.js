@@ -1,76 +1,116 @@
-// =========================================================
-// GANTI NAMA VERSI INI SETIAP KALI KAMU MENGUBAH KODE INDEX.HTML
-// Contoh: Jika besok kamu merubah warna tombol, ubah menjadi 'uanga-cache-v3.1'
-// =========================================================
-const CACHE_NAME = 'uanga-cache-v3.0';
+/**
+ * SERVICE WORKER uanga famBARLA (VERSI FINAL ABSOLUT + VISUAL FIX)
+ * Fitur: Cache Splitting, Stale-While-Revalidate, Anti-Self-Caching, Safe Response Check, Font Caching.
+ */
 
-const urlsToCache = [
-  './',
-  './index.html',
-  './manifest.json',
+// =========================================================
+// ⚠️ PENTING: GANTI ANGKA INI SETIAP ADA UPDATE DI APLIKASI
+// Ubah angka ini (misal ke '3.4') jika besok kamu merubah index.html
+// =========================================================
+const APP_VERSION = '3.3'; 
+
+// Pemisahan Brankas Memori
+const CACHE_STATIC = 'uanga-static-v' + APP_VERSION;
+const CACHE_DYNAMIC = 'uanga-dynamic-v' + APP_VERSION;
+
+// BRANKAS STATIS: File besar eksternal & CSS
+const staticAssets = [
   'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@700;800&display=swap',
   'https://cdn.jsdelivr.net/npm/chart.js',
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
 ];
 
-// 1. PROSES INSTALL: Menyimpan file dasar dan MEMAKSA UPDATE
+// BRANKAS DINAMIS: File utama aplikasi
+const dynamicAssets = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
+];
+
+// 1. INSTALASI: Menyimpan data awal & Memaksa Update (Auto-Pilot)
 self.addEventListener('install', event => {
-  // skipWaiting() memaksa Service Worker baru untuk langsung aktif 
-  // tanpa menunggu user menutup aplikasi. Inilah kunci "Auto-Update".
   self.skipWaiting(); 
-  
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('[Service Worker] Menyimpan Cache Aplikasi');
-        return cache.addAll(urlsToCache);
-      })
+    Promise.all([
+      caches.open(CACHE_STATIC).then(cache => cache.addAll(staticAssets)),
+      caches.open(CACHE_DYNAMIC).then(cache => cache.addAll(dynamicAssets))
+    ])
   );
 });
 
-// 2. PROSES AKTIVASI: Membersihkan sampah versi lama
+// 2. AKTIVASI: Petugas Kebersihan Cache Versi Lama
 self.addEventListener('activate', event => {
+  self.clients.claim(); 
   event.waitUntil(
-    caches.keys().then(cacheNames => {
+    caches.keys().then(keys => {
       return Promise.all(
-        cacheNames.map(cacheName => {
-          // Jika ada cache dengan nama versi lama, HAPUS!
-          if (cacheName !== CACHE_NAME) {
-            console.log('[Service Worker] Menghapus Cache Lama:', cacheName);
-            return caches.delete(cacheName);
+        keys.map(key => {
+          if (key !== CACHE_STATIC && key !== CACHE_DYNAMIC) {
+            console.log('[Service Worker] Menghapus Cache Lama:', key);
+            return caches.delete(key);
           }
         })
       );
     })
   );
-  // clients.claim() memastikan Service Worker baru langsung mengontrol halaman saat ini
-  self.clients.claim();
 });
 
-// 3. PROSES FETCH (MENGAMBIL DATA): Strategi "Network-First"
+// 3. POLISI LALU LINTAS (SMART FETCHING)
 self.addEventListener('fetch', event => {
-  // PENGECUALIAN MUTLAK: Jangan pernah meng-cache link Google Sheets kita!
-  if (event.request.url.includes('script.google.com')) {
-    return; 
+  const requestUrl = new URL(event.request.url);
+
+  // BUG FIX 1: JALUR EVAKUASI UNTUK SW.JS (Anti Bunuh Diri)
+  // Biarkan browser yang mengurus file sw.js, jangan pernah masuk brankas!
+  if (requestUrl.pathname.endsWith('sw.js')) {
+    return;
   }
 
+  // LOGIKA A: JALUR KHUSUS GOOGLE SHEETS (NETWORK-ONLY)
+  if (requestUrl.hostname === 'script.google.com') {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // LOGIKA B: BRANKAS STATIS (CACHE-FIRST + PENANGKAP FONT GOOGLE)
+  if (staticAssets.some(url => event.request.url.includes(url)) || requestUrl.hostname === 'fonts.gstatic.com') {
+    event.respondWith(
+      caches.match(event.request).then(cachedResponse => {
+        return cachedResponse || fetch(event.request).then(networkResponse => {
+          // Simpan jika status 200 (sukses) atau status 0 (Opaque response dari font)
+          if (networkResponse && (networkResponse.status === 200 || networkResponse.status === 0)) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_STATIC).then(cache => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return networkResponse;
+        });
+      })
+    );
+    return;
+  }
+
+  // LOGIKA C: BRANKAS DINAMIS (STALE-WHILE-REVALIDATE / UPDATE SILUMAN)
   event.respondWith(
-    // Langkah 1: Selalu coba ambil file terbaru dari internet (Server/Hosting)
-    fetch(event.request)
-      .then(response => {
-        // Jika berhasil dapat yang baru dari internet, perbarui cache diam-diam
-        if (response && response.status === 200 && response.type === 'basic') {
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
+    caches.match(event.request).then(cachedResponse => {
+      const fetchPromise = fetch(event.request).then(networkResponse => {
+        // Hanya simpan file yang valid (Sukses)
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_DYNAMIC).then(cache => {
             cache.put(event.request, responseToCache);
           });
         }
-        return response; // Tampilkan yang terbaru ke layar
-      })
-      .catch(() => {
-        // Langkah 2: Jika gagal (HP sedang Offline/Tidak ada sinyal internet),
-        // barulah ambil file dari memori cache.
-        return caches.match(event.request);
-      })
+        return networkResponse;
+      }).catch(() => {
+        // Abaikan error jika HP sedang Offline (Silent fallback).
+      });
+
+      // Kembalikan versi cache secepat kilat. Jika cache kosong, tunggu hasil download.
+      // Mode Offline Fallback jika mengetik URL manual.
+      return cachedResponse || fetchPromise || caches.match('./index.html');
+    })
   );
 });
