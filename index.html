@@ -30,9 +30,9 @@
             
             /* Garis & Aksen Monokrom */
             --border-color: #333333;
-            --wa-green: #ffffff; 
-            --gold: #cccccc;     
-            --blue: #aaaaaa;     
+            --wa-green: #00C853; /* Hijau Khas Uang */
+            --gold: #ffffff;     
+            --blue: #ffffff;     
             --purple: #777777;   
             
             /* Warna Ikon Khusus */
@@ -95,14 +95,14 @@
         .nav-tabs {
             display: flex; background-color: var(--wa-card); text-transform: uppercase; font-weight: 600; font-size: 12px;
             position: relative; z-index: 10; flex-shrink: 0; margin: 15px 15px 0 15px; border-radius: 8px; border: 1px solid var(--border-color); 
-            transition: border-color 0.3s ease; overflow: hidden;
+            overflow: hidden;
         }
         .tab { flex: 1; padding: 12px 0; text-align: center; cursor: pointer; transition: 0.3s; color: var(--text-muted); border-right: 1px solid var(--border-color); }
         .tab:last-child { border-right: none; }
         .tab-debit.active { color: var(--wa-green); background: #222222; }
         .tab-kredit.active { color: var(--danger); background: #222222;}
-        .tab-plot.active { color: var(--gold); background: #222222;}
-        .tab-rekap.active { color: var(--blue); background: #222222;}
+        .tab-plot.active { color: #ffffff; background: #222222;}
+        .tab-rekap.active { color: #ffffff; background: #222222;}
 
         /* ================= LAYOUT ================= */
         .page { display: flex; flex-direction: column; flex: 1; min-height: 0; }
@@ -144,13 +144,19 @@
         .custom-option { padding: 12px; border-bottom: 1px solid var(--border-color); cursor: pointer; color: var(--text-light); font-size: 14px; font-weight: 500; }
         .custom-option:hover { background-color: rgba(255, 255, 255, 0.1); }
         
-        button.btn-main {
-            width: 100%; padding: 14px; border: 1px solid var(--border-color); border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; font-family: 'Montserrat', sans-serif; text-transform: uppercase; margin-top: 5px;
-            background-color: #222222; color: #ffffff !important; transition: 0.2s;
+        /* GHOST BUTTONS (Seragam Abu-abu Gelap) */
+        button.btn-main, .modal-btn {
+            width: 100%; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; font-family: 'Montserrat', sans-serif; text-transform: uppercase; margin-top: 5px;
+            background-color: #222222 !important; transition: 0.2s; box-sizing: border-box;
         }
-        button.btn-main:hover { background-color: #333333; }
-        button.btn-main:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-red { background-color: var(--danger) !important; color: #fff !important; border: none; }
+        button.btn-main:hover, .modal-btn:hover { background-color: #333333 !important; }
+        button.btn-main:disabled, .modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .btn-green { color: var(--wa-green) !important; border: 1px solid var(--wa-green) !important; }
+        .btn-red { color: var(--danger) !important; border: 1px solid var(--danger) !important; }
+        .btn-white { color: #ffffff !important; border: 1px solid #ffffff !important; }
+        .btn-cloud { color: var(--cloud) !important; border: 1px solid var(--cloud) !important; }
+        .btn-muted { color: var(--text-light) !important; border: 1px solid var(--border-color) !important; }
 
         /* ================= REKAP & SALDO ================= */
         .balance-box { text-align: center; padding: 12px; background: #111111; color: var(--text-light); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 8px; position: relative;}
@@ -178,7 +184,7 @@
         .editable { cursor: pointer; transition: 0.2s; flex: 1; min-width: 0; } 
         .mutasi-text { color: var(--text-light); font-weight: 700; }
         .expense-text { color: var(--danger); }
-        .income-text { color: var(--text-light); }
+        .income-text { color: var(--wa-green); }
 
         /* ================= PLOT LIST ================= */
         #plot-list { overflow-y: auto; flex: 1; min-height: 0; padding-right: 5px; padding-bottom: 20px; }
@@ -190,9 +196,8 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(4px);
             display: flex; justify-content: center; align-items: center; z-index: 20000;
         }
-        .modal-box { background: var(--wa-card); padding: 25px 20px; border-radius: 16px; width: 85%; max-width: 320px; text-align: center; border: 1px solid var(--border-color); box-shadow: 0 15px 35px rgba(0,0,0,1); }
+        .modal-box { background: var(--wa-card); padding: 25px 20px; border-radius: 16px; width: 85%; max-width: 320px; text-align: center; border: 1px solid var(--border-color); box-shadow: 0 15px 35px rgba(0,0,0,1); transition: border-color 0.3s; }
         .modal-actions { display: flex; gap: 10px; justify-content: center; margin-top:15px; }
-        .modal-btn { flex: 1; padding: 12px; border: 1px solid var(--border-color); background: #222; color: #fff; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif; font-size: 12px; text-transform: uppercase; transition: 0.2s;}
         
         #modal-input { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--border-color); background: #000; color: var(--text-light); text-align: center; font-size: 16px; font-weight: 500; box-sizing: border-box;}
 
@@ -219,10 +224,10 @@
         .chart-wrapper { width: 100%; max-width: 140px; position: relative; margin: 0 auto;}
 
         /* ================= PICKER ================= */
-        .picker-box { background: var(--wa-card); padding: 20px; border-radius: 16px; width: 85%; max-width: 320px; border: 1px solid var(--border-color); box-shadow: 0 15px 35px rgba(0,0,0,1); }
+        .picker-box { background: var(--wa-card); padding: 20px; border-radius: 16px; width: 85%; max-width: 320px; border: 1px solid var(--border-color); box-shadow: 0 15px 35px rgba(0,0,0,1); transition: border-color 0.3s; }
         .picker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .picker-nav { background: none; border: none; color: var(--text-light); font-size: 20px; cursor: pointer; padding: 5px 15px; font-weight: bold; }
-        .picker-title { font-weight: 600; font-size: 15px; color: var(--text-light); }
+        .picker-title { font-weight: 600; font-size: 15px; color: var(--text-light); transition: color 0.3s;}
         .picker-days-header { display: flex; width: 100%; text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 10px; }
         .picker-days-header span { flex: 1; }
         .picker-grid { display: flex; flex-wrap: wrap; width: 100%; }
@@ -231,7 +236,7 @@
         .picker-months-grid { display: flex; flex-wrap: wrap; width: 100%; margin-top: 10px; }
         #cp-month-view .picker-item { width: 33.33%; margin-bottom: 5px; }
         .picker-item:hover { background: rgba(255,255,255,0.1); }
-        .picker-item.selected { font-weight: 700; color: #000 !important; background: #ffffff !important; } 
+        .picker-item.selected { font-weight: 700; } /* Background inline js ghost ui */
 
         .creator-watermark { position: fixed; bottom: 8px; left: 12px; font-size: 9px; color: var(--text-muted); z-index: 9999; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,0.8); letter-spacing: 0.3px; }
         .creator-watermark .fam { font-size: 8px; font-weight: 500; }
@@ -242,7 +247,7 @@
 
 <header>
     <div style="display: flex; flex-direction: column;">
-        <h2 class="app-title" onclick="resetFormulirUtama()" style="cursor: pointer;">uanga <span class="title-accent">famBARLA</span></h2>
+        <h2 class="app-title" onclick="resetFormulirUtama()">uanga <span class="title-accent">famBARLA</span></h2>
         <div id="realtime-clock" class="clock-text">Memuat Waktu...</div>
     </div>
     
@@ -252,7 +257,7 @@
             <span id="storage-pct">0%</span>
         </div>
         
-        <button class="icon-btn" onclick="backupToCloud()" style="padding: 4px 6px; flex-direction: column; gap: 2px; background: transparent;">
+        <button class="icon-btn" onclick="backupToCloud()" style="padding: 4px 6px; flex-direction: column; gap: 2px;">
             <svg viewBox="0 0 24 24" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
                 <path fill="var(--cloud)" d="M17.5 19C19.985 19 22 16.985 22 14.5C22 12.15 20.211 10.22 17.934 10.018C17.332 6.623 14.939 4 12 4C8.91 4 6.452 6.29 5.568 9.176C2.936 9.615 1 11.895 1 14.5C1 17.537 3.463 20 6.5 20H17.5V19Z"/>
                 <path fill="#000" d="M12 7L7 12H10V16H14V12H17L12 7Z"/>
@@ -298,7 +303,7 @@
     <div id="pemasukan" class="page">
         <div class="card">
             <h3 style="margin:0 0 15px 0; color:var(--text-light); font-size:16px;">+ Catat Pemasukan</h3>
-            <div class="form-group"><label>Tanggal</label><input type="text" id="in-date" readonly onclick="openPicker('in-date', 'date', '#ffffff')"></div>
+            <div class="form-group"><label>Tanggal</label><input type="text" id="in-date" readonly onclick="openPicker('in-date', 'date', 'var(--wa-green)')"></div>
             <div class="form-group"><label>Keterangan</label><input type="text" id="in-desc" placeholder="Gaji, Insentif, dll" autocomplete="off"></div>
             <div class="form-group">
                 <label>Sumber Dana</label>
@@ -309,12 +314,12 @@
                 <input type="hidden" id="in-wallet" value="Tunai">
             </div>
             <div class="form-group"><label>Jumlah (Rp)</label><input type="text" inputmode="numeric" id="in-amount" placeholder="0"></div>
-            <button class="btn-main" id="btn-save-in" onclick="saveData(event, 'income')">Simpan Pemasukan</button>
+            <button class="btn-main btn-green" id="btn-save-in" onclick="saveData(event, 'income')">Simpan Pemasukan</button>
         </div>
     </div>
 
     <div id="pengeluaran" class="page hidden">
-        <div class="card" style="border-color: var(--danger);">
+        <div class="card">
             <h3 style="margin:0 0 15px 0; color:var(--danger); font-size:16px;">- Catat Pengeluaran</h3>
             <div class="form-group"><label>Tanggal</label><input type="text" id="out-date" readonly onclick="openPicker('out-date', 'date', 'var(--danger)')"></div>
             <div class="form-group">
@@ -344,7 +349,7 @@
             <h3 style="margin:0 0 15px 0; color:var(--text-light); font-size:16px;">Alokasi Anggaran</h3>
             <div class="form-group"><label>Nama Anggaran</label><input type="text" id="plot-name" placeholder="Uang Makan, Uang Bensin, dll" autocomplete="off"></div>
             <div class="form-group"><label>Target Per Bulan (Rp)</label><input type="text" inputmode="numeric" id="plot-amount" placeholder="0"></div>
-            <button class="btn-main" onclick="savePlot()">Tambah Plot</button>
+            <button class="btn-main btn-white" onclick="savePlot()">Tambah Plot</button>
         </div>
         <div class="card card-flex">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-shrink:0;">
@@ -388,7 +393,7 @@
                 <div class="wallet-card"><small>BANK</small><span id="bal-bank">0</span></div>
                 <div class="wallet-card"><small>E-WALLET</small><span id="bal-ewallet">0</span></div>
             </div>
-            <button class="btn-main" onclick="openMutationModal()" style="margin-top: 0; margin-bottom:10px; border-radius: 12px; padding: 12px;">⇄ Mutasi Saldo (Transfer)</button>
+            <button class="btn-main btn-white" onclick="openMutationModal()" style="margin-top: 0; margin-bottom:10px; border-radius: 12px; padding: 12px;">⇄ Mutasi Saldo (Transfer)</button>
         </div>
 
         <div class="history-columns">
@@ -399,29 +404,29 @@
 </div>
 
 <div id="chart-modal" class="modal-overlay hidden">
-    <div class="modal-box" style="width: 90%; max-width: 360px; border: 1px solid var(--border-color); padding: 25px 20px;">
+    <div class="modal-box" style="width: 90%; max-width: 360px; padding: 25px 20px;">
         <h3 style="margin-top:0; margin-bottom: 20px; color:var(--text-light); font-size:16px;">Status Keuangan Saat Ini</h3>
         <div class="charts-grid">
             <div class="chart-box"><span class="chart-title">Rincian Pengeluaran</span><div class="chart-wrapper"><canvas id="cashChart"></canvas></div></div>
             <div class="chart-box"><span class="chart-title">Portofolio Dompet</span><div class="chart-wrapper"><canvas id="portChart"></canvas></div></div>
         </div>
-        <button class="modal-btn cancel" style="width: 100%; margin-top: 0;" onclick="closeChartModal()">Tutup Grafik</button>
+        <button class="modal-btn btn-white" style="margin-top: 0;" onclick="closeChartModal()">Tutup Grafik</button>
     </div>
 </div>
 
 <div id="mutation-modal" class="modal-overlay hidden">
-    <div class="modal-box" style="border: 1px solid var(--border-color); padding: 20px;">
-        <h3 style="margin-top:0; margin-bottom: 15px; color:var(--text-light); font-size:16px;">⇄ Mutasi Saldo</h3>
+    <div class="modal-box" style="padding: 20px; border-color: #ffffff;">
+        <h3 style="margin-top:0; margin-bottom: 15px; color:#ffffff; font-size:16px;">⇄ Mutasi Saldo</h3>
         <div class="form-group" style="text-align:left;"><label>Dari Dompet</label><div class="custom-select-container"><div class="custom-select-trigger" id="mut-from-trigger" onclick="toggleCustomSelect('mut-from-opts', event)">Tunai</div><div class="custom-select-options hidden" id="mut-from-opts"></div></div><input type="hidden" id="mut-from" value="Tunai"></div>
         <div class="form-group" style="text-align:left;"><label>Ke Dompet</label><div class="custom-select-container"><div class="custom-select-trigger" id="mut-to-trigger" onclick="toggleCustomSelect('mut-to-opts', event)">Bank</div><div class="custom-select-options hidden" id="mut-to-opts"></div></div><input type="hidden" id="mut-to" value="Bank"></div>
         <div class="form-group" style="text-align:left; margin-bottom: 15px;"><label>Jumlah (Rp)</label><input type="text" inputmode="numeric" id="mut-amount" placeholder="0"></div>
-        <div class="modal-actions"><button class="modal-btn cancel" onclick="closeMutationModal()">Batal</button><button class="modal-btn" style="background:#444;" onclick="processMutation()">Transfer</button></div>
+        <div class="modal-actions"><button class="modal-btn btn-white cancel" onclick="closeMutationModal()">Batal</button><button class="modal-btn btn-white" onclick="processMutation()">Transfer</button></div>
     </div>
 </div>
 
 <div id="cloud-load-modal" class="modal-overlay hidden">
-    <div class="modal-box" style="border: 1px solid var(--border-color);">
-        <h3 style="margin-top:0; margin-bottom: 15px; color:var(--text-light); font-size:16px;">☁️ Load Data Cloud</h3>
+    <div class="modal-box" style="border-color: var(--cloud);">
+        <h3 style="margin-top:0; margin-bottom: 15px; color:var(--cloud); font-size:16px;">☁️ Load Data Cloud</h3>
         <p style="font-size:12px; color:var(--text-muted); margin-bottom: 15px;">Pilih bulan yang ingin ditarik ke HP.</p>
         <div class="form-group" style="text-align:left;">
             <div class="custom-select-container">
@@ -431,17 +436,17 @@
             <input type="hidden" id="cloud-month-val" value="">
         </div>
         <div class="modal-actions">
-            <button class="modal-btn cancel" onclick="closeCloudLoadModal()">Batal</button>
-            <button class="modal-btn ok" id="btn-execute-load-cloud" onclick="executeLoadCloud()" style="background:var(--cloud); color:#000; border:none;" disabled>Download</button>
+            <button class="modal-btn btn-cloud cancel" onclick="closeCloudLoadModal()">Batal</button>
+            <button class="modal-btn btn-cloud ok" id="btn-execute-load-cloud" onclick="executeLoadCloud()" disabled>Download</button>
         </div>
     </div>
 </div>
 
 <div id="about-modal" class="modal-overlay hidden">
-    <div class="modal-box" style="border: 1px solid #555; padding: 25px 20px; text-align: left; max-height: 85vh; overflow-y: auto; background: #000000;">
+    <div class="modal-box" style="padding: 25px 20px; text-align: left; max-height: 85vh; overflow-y: auto; border-color: #ffffff;">
         <div style="text-align: center; margin-bottom: 20px;">
             <h2 style="font-family: 'Poppins', sans-serif; font-weight: 800; margin: 0; font-size: 26px; color: #ffffff; letter-spacing: 0.5px;">uanga <span style="font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 16px;">famBARLA</span></h2>
-            <small id="app-version-display" style="color: #888888; font-weight: 700; letter-spacing: 1px;">VERSI 3.2</small>
+            <small id="app-version-display" style="color: #888888; font-weight: 700; letter-spacing: 1px;">VERSI 3.4</small>
         </div>
         <div style="font-size: 13px; line-height: 1.6; color: #ffffff;">
             <div style="background: #111111; padding: 20px; border-radius: 12px; border: 1px solid #333333;">
@@ -462,7 +467,7 @@
             </div>
             <p style="text-align: center; color: #555555; font-size: 10px; margin-top: 25px;">Hak Cipta © 2026 - uanga famBARLA</p>
         </div>
-        <button class="modal-btn" style="width: 100%; background: transparent; color: #ff3b30; border: 1px solid var(--border-color); margin-top: 15px; padding: 14px; font-weight: 800; font-size: 13px;" onclick="closeAboutModal()">TUTUP</button>
+        <button class="modal-btn btn-white" style="margin-top: 15px;" onclick="closeAboutModal()">TUTUP</button>
     </div>
 </div>
 
@@ -480,7 +485,15 @@
 </div>
 
 <div id="import-modal" class="modal-overlay hidden">
-    <div class="modal-box"><h3>Metode Impor</h3><p style="font-size:12px; color:var(--text-muted); margin-bottom: 15px;">Pilih cara memproses data Excel lama.</p><div style="display:flex; flex-direction:column; gap:8px;"><button class="modal-btn" style="background:#333;" onclick="executeImport('ringkas')">Import Ringkas (Hemat Memori)</button><button class="modal-btn" style="background:#555;" onclick="executeImport('semua')">Import Semua (Muat Detail)</button><button class="modal-btn cancel" onclick="document.getElementById('import-modal').classList.add('hidden'); document.getElementById('file-import').value = '';">Batal</button></div></div>
+    <div class="modal-box" style="border-color: #ffffff;">
+        <h3 style="margin-top:0; color:#fff;">Metode Impor</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom: 15px;">Pilih cara memproses data Excel lama.</p>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+            <button class="modal-btn btn-white" onclick="executeImport('ringkas')">Import Ringkas (Hemat Memori)</button>
+            <button class="modal-btn btn-white" onclick="executeImport('semua')">Import Semua (Muat Detail)</button>
+            <button class="modal-btn btn-white cancel" onclick="document.getElementById('import-modal').classList.add('hidden'); document.getElementById('file-import').value = '';">Batal</button>
+        </div>
+    </div>
 </div>
 
 <div id="edit-modal" class="modal-overlay hidden">
@@ -491,7 +504,7 @@
         <div class="form-group" style="text-align:left;"><label>Keterangan</label><input type="text" id="edit-desc" autocomplete="off"></div>
         <div class="form-group" style="text-align:left;" id="edit-wallet-container"><label>Sumber Dana</label><div class="custom-select-container"><div class="custom-select-trigger" id="edit-wallet-trigger" onclick="toggleCustomSelect('edit-wallet-opts', event)">Tunai</div><div class="custom-select-options hidden" id="edit-wallet-opts"></div></div><input type="hidden" id="edit-wallet" value="Tunai"></div>
         <div class="form-group" style="text-align:left;"><label>Jumlah (Rp)</label><input type="text" inputmode="numeric" id="edit-amount"></div>
-        <div class="modal-actions"><button class="modal-btn cancel" onclick="document.getElementById('edit-modal').classList.add('hidden')">Batal</button><button class="modal-btn ok" id="edit-btn-save">Simpan</button></div>
+        <div class="modal-actions"><button class="modal-btn cancel" id="edit-btn-cancel" onclick="document.getElementById('edit-modal').classList.add('hidden')">Batal</button><button class="modal-btn ok" id="edit-btn-save">Simpan</button></div>
     </div>
 </div>
 
@@ -500,17 +513,23 @@
         <div class="picker-header"><button class="picker-nav" onclick="cpChange(-1)">&#10094;</button><div id="cp-title" class="picker-title">2026</div><button class="picker-nav" onclick="cpChange(1)">&#10095;</button></div>
         <div id="cp-day-view"><div class="picker-days-header"><span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span></div><div id="cp-grid-days" class="picker-grid"></div></div>
         <div id="cp-month-view" class="picker-months-grid hidden"></div>
-        <div class="modal-actions"><button class="modal-btn cancel" onclick="closePicker()">Batal</button><button class="modal-btn" style="background:#444;" onclick="cpSetToday()" id="cp-today-btn">Hari Ini</button><button class="modal-btn ok" id="cp-setel-btn" onclick="setPickerDate()">Setel</button></div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="closePicker()">Batal</button>
+            <button class="modal-btn" id="cp-today-btn" onclick="cpSetToday()">Hari Ini</button>
+            <button class="modal-btn ok" id="cp-setel-btn" onclick="setPickerDate()">Setel</button>
+        </div>
     </div>
 </div>
 
 <input type="file" id="file-import" accept=".xlsx, .xls" class="hidden" onchange="importFromExcel(event)">
 
+<div class="creator-watermark">created by <span class="fam">fam</span><span class="barla">BARLA</span></div>
+
 <script>
     // =========================================================
     // 1. PENGATURAN AWAL & DATABASE 
     // =========================================================
-    const APP_VERSION = "3.2"; 
+    const APP_VERSION = "3.4"; 
     const CLOUD_URL = "https://script.google.com/macros/s/AKfycbwb0SJIbBzZvZ74s1z1OGsHZuwB_sq3b7R91BnuGdawxpP69bTDVyC1IeozUQYezTgQ/exec";
 
     if ('serviceWorker' in navigator) {
@@ -605,7 +624,7 @@
     });
 
     // =========================================================
-    // 3. LOGIKA POPUP NOTIFIKASI
+    // 3. LOGIKA POPUP NOTIFIKASI GHOST UI
     // =========================================================
     function showPopup(mode, pesan, warnaTema = '#ffffff', callback = null, nilaiAwal = null, isAngka = false) {
         const overlay = document.getElementById('custom-modal'), 
@@ -614,7 +633,8 @@
               btnBatal = document.getElementById('modal-btn-cancel'), 
               btnOk = document.getElementById('modal-btn-ok'),
               judul = document.getElementById('modal-title'),
-              loader = document.getElementById('modal-loader');
+              loader = document.getElementById('modal-loader'),
+              modalBox = overlay.querySelector('.modal-box');
         
         teks.innerText = pesan; 
         overlay.classList.remove('hidden');
@@ -625,38 +645,34 @@
         input.value = ''; 
         input.oninput = null;
 
-        judul.style.color = (warnaTema === '#ff3b30' || warnaTema === 'var(--danger)') ? 'var(--danger)' : (warnaTema === 'var(--cloud)' ? 'var(--cloud)' : '#ffffff');
+        judul.style.color = warnaTema;
+        modalBox.style.borderColor = warnaTema;
+
+        btnOk.className = "modal-btn ok";
+        btnOk.style.cssText = `background-color: #222222 !important; color: ${warnaTema} !important; border: 1px solid ${warnaTema} !important;`;
+        
+        btnBatal.className = "modal-btn cancel hidden";
+        btnBatal.style.cssText = `background-color: #222222 !important; color: ${warnaTema} !important; border: 1px solid ${warnaTema} !important;`;
 
         if (mode === 'loading') {
             if(loader) loader.classList.remove('hidden');
         } else if (mode === 'delete' || mode === 'reverse') {
             btnBatal.classList.remove('hidden'); 
             btnOk.classList.remove('hidden');
-            btnBatal.style.backgroundColor = warnaTema;
-            btnBatal.style.color = '#fff';
-            btnBatal.style.border = 'none';
-            btnOk.style.backgroundColor = 'transparent';
-            btnOk.style.color = 'var(--text-light)';
-            btnOk.style.border = '1px solid var(--border-color)';
             btnOk.onclick = () => { overlay.classList.add('hidden'); if(callback) callback(); };
             btnBatal.onclick = () => overlay.classList.add('hidden');
         } else {
             btnOk.classList.remove('hidden');
-            btnOk.style.backgroundColor = (warnaTema === 'var(--wa-green)' || warnaTema === '#ffffff') ? '#333333' : warnaTema;
-            btnOk.style.color = '#fff';
-            btnOk.style.border = '1px solid var(--border-color)';
-            btnBatal.style.backgroundColor = 'transparent';
-            btnBatal.style.color = 'var(--text-light)';
-            btnBatal.style.border = `1px solid var(--border-color)`;
-
             if (mode === 'edit') {
-                btnBatal.classList.remove('hidden'); input.classList.remove('hidden');
+                btnBatal.classList.remove('hidden'); 
+                input.classList.remove('hidden');
                 if (isAngka) { input.inputMode = "numeric"; input.value = parseInt(nilaiAwal, 10).toLocaleString('id-ID'); input.oninput = Utils.formatRibuanInput; } 
                 else { input.inputMode = "text"; input.value = nilaiAwal; }
                 btnOk.onclick = () => { overlay.classList.add('hidden'); if(callback) callback(input.value); };
                 btnBatal.onclick = () => overlay.classList.add('hidden');
             } else if (mode === 'confirm') {
-                btnBatal.classList.remove('hidden'); btnOk.onclick = () => { overlay.classList.add('hidden'); if(callback) callback(); };
+                btnBatal.classList.remove('hidden'); 
+                btnOk.onclick = () => { overlay.classList.add('hidden'); if(callback) callback(); };
                 btnBatal.onclick = () => overlay.classList.add('hidden');
             } else {
                 btnOk.onclick = () => { overlay.classList.add('hidden'); if(callback) callback(); };
@@ -668,7 +684,7 @@
     function closeAboutModal() { document.getElementById('about-modal').classList.add('hidden'); }
 
     // =========================================================
-    // 4. KODE CLOUD BACKUP & LOAD (OPSI B: SMART MENU)
+    // 4. KODE CLOUD BACKUP & LOAD 
     // =========================================================
     function backupToCloud() {
         const dropdownMenu = document.getElementById('dropdown-menu');
@@ -768,40 +784,34 @@
     // 5. UPDATE DINAMIS & UI NAVIGATION
     // =========================================================
     
-    // --- SUNTIKAN RESET FORMULIR UTAMA (TOMBOL PANIK) ---
     function resetFormulirUtama() {
         const hrIni = Utils.tglHariIni();
         const formatHrIni = Utils.formatTglTampil(hrIni);
 
-        // Reset Tanggal
         document.getElementById('in-date').dataset.rawDate = hrIni;
         document.getElementById('in-date').value = formatHrIni;
         document.getElementById('out-date').dataset.rawDate = hrIni;
         document.getElementById('out-date').value = formatHrIni;
 
-        // Reset Input Teks & Angka
         document.getElementById('in-desc').value = '';
         document.getElementById('in-amount').value = '';
         document.getElementById('out-desc').value = '';
         document.getElementById('out-amount').value = '';
 
-        // Reset Dropdown
         setCustomVal('in-wallet', 'in-wallet-trigger', 'in-wallet-opts', 'Tunai');
         setCustomVal('out-wallet', 'out-wallet-trigger', 'out-wallet-opts', 'Tunai');
         setCustomVal('out-plot', 'out-plot-trigger', 'out-plot-opts', '', '-- Tanpa Plot --', '');
 
         updateWalletDropdownBalances();
 
-        // Redirect ke tab Debit
         document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.getElementById('pemasukan').classList.remove('hidden');
         document.querySelector('.tab-debit').classList.add('active');
-        document.getElementById('main-nav-tabs').style.borderColor = 'var(--border-color)'; // Fix untuk warna border menu fambarla
+        document.getElementById('main-nav-tabs').style.borderColor = 'var(--border-color)'; 
 
-        showPopup('alert', "✨ Formulir berhasil di-reset ke Hari Ini!", '#ffffff');
+        showPopup('alert', "✨ Formulir berhasil di-reset ke Hari Ini!", 'var(--wa-green)');
     }
-    // ----------------------------------------------------
 
     function updateWalletDropdownBalances() {
         const wallets = ['Tunai', 'Bank', 'e-Wallet'];
@@ -838,7 +848,6 @@
         });
     }
 
-    // FUNGSI AUTO-FILL KETERANGAN DARI PLOT
     function setCustomVal(inputId, triggerId, optId, nilai, namaTampil = null, rawPlotName = null) {
         document.getElementById(inputId).value = nilai;
         const triggerEl = document.getElementById(triggerId);
@@ -846,7 +855,6 @@
         triggerEl.style.color = nilai === "" ? 'var(--text-muted)' : 'var(--text-light)';
         document.getElementById(optId).classList.add('hidden');
         
-        // AUTO FILL KETERANGAN UNTUK INPUT BARU & EDIT
         if (inputId === 'out-plot') {
             const descInput = document.getElementById('out-desc');
             if (rawPlotName) descInput.value = rawPlotName;
@@ -867,7 +875,6 @@
         AppState.db.plots.forEach(p => {
             const namaAman = Utils.amanHTML(p.name);
             const displayTxt = `${namaAman} (Rp ${p.target.toLocaleString('id-ID')})`;
-            // Mengirimkan namaAman sebagai parameter ke-6 untuk Auto-fill
             opsiHTML += `<div class="custom-option" onclick="setCustomVal('${hiddenId}','${triggerId}','${containerId}','${p.id}', '${displayTxt}', '${namaAman}')">${displayTxt}</div>`;
         });
         kotakOpsi.innerHTML = opsiHTML;
@@ -881,20 +888,13 @@
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.getElementById(idHalaman).classList.remove('hidden');
         if(event) event.currentTarget.classList.add('active');
-        const navTabs = document.getElementById('main-nav-tabs');
-        if (idHalaman === 'pemasukan') navTabs.style.borderColor = 'var(--border-color)';
-        else if (idHalaman === 'pengeluaran') navTabs.style.borderColor = 'var(--danger)';
-        else if (idHalaman === 'plot') navTabs.style.borderColor = 'var(--gold)';
-        else if (idHalaman === 'rekap') navTabs.style.borderColor = 'var(--blue)';
         
-        // --- SUNTIKAN RESET TANGGAL SAAT PINDAH TAB ---
         const hrIni = Utils.tglHariIni();
         const formatHrIni = Utils.formatTglTampil(hrIni);
         document.getElementById('in-date').dataset.rawDate = hrIni;
         document.getElementById('in-date').value = formatHrIni;
         document.getElementById('out-date').dataset.rawDate = hrIni;
         document.getElementById('out-date').value = formatHrIni;
-        // ----------------------------------------------
 
         if (idHalaman === 'rekap') updateRekap();
         if (idHalaman === 'plot') updatePlotList();
@@ -925,24 +925,23 @@
     });
 
     // =========================================================
-    // 6. LOGIKA CRUD (DENGAN ANTI-OVERBUDGET)
+    // 6. LOGIKA CRUD 
     // =========================================================
     function prosesSimpanAkhir(tipe, tgl, ket, nom, dmp, plt, pfx) {
+        const warnaTema = tipe === 'income' ? 'var(--wa-green)' : 'var(--danger)';
         AppState.db[tipe].push({ id: Utils.buatId(), date: tgl, desc: ket, amount: nom, wallet: dmp, plotId: plt });
         simpanDatabase();
         document.getElementById(`${pfx}-amount`).value = '';
         document.getElementById(`${pfx}-desc`).value = '';
         if (tipe === 'expense') setCustomVal('out-plot', 'out-plot-trigger', 'out-plot-opts', '', '-- Tanpa Plot --', '');
         
-        // --- SUNTIKAN RESET TANGGAL PASCA SIMPAN ---
         const hrIni = Utils.tglHariIni();
         document.getElementById(`${pfx}-date`).dataset.rawDate = hrIni;
         document.getElementById(`${pfx}-date`).value = Utils.formatTglTampil(hrIni);
-        // -------------------------------------------
 
         updateRekap();
         updateWalletDropdownBalances();
-        showPopup('alert', "Catatan berhasil disimpan!", tipe === 'expense' ? 'var(--danger)' : '#ffffff');
+        showPopup('alert', "Catatan berhasil disimpan!", warnaTema);
     }
 
     function saveData(event, tipe) {
@@ -955,9 +954,12 @@
         const nom = Math.abs(Number(document.getElementById(`${pfx}-amount`).value.replace(/\./g, '')));
         const dmp = document.getElementById(`${pfx}-wallet`).value;
         const plt = tipe === 'expense' ? document.getElementById('out-plot').value : null;
-        if (!tgl || isNaN(nom) || nom <= 0 || !ket) return showPopup('alert', "Mohon lengkapi semua data dengan benar!", 'var(--danger)');
+        
+        const warnaTema = tipe === 'income' ? 'var(--wa-green)' : 'var(--danger)';
+
+        if (!tgl || isNaN(nom) || nom <= 0 || !ket) return showPopup('alert', "Mohon lengkapi semua data dengan benar!", warnaTema);
         if (tipe === 'expense') {
-            if (getSaldoDompet(dmp) < nom) return showPopup('alert', `Saldo [${dmp}] tidak mencukupi!`, 'var(--danger)');
+            if (getSaldoDompet(dmp) < nom) return showPopup('alert', `Saldo [${dmp}] tidak mencukupi!`, warnaTema);
             if (plt) {
                 const plotObj = AppState.db.plots.find(p => p.id === plt);
                 if (plotObj && plotObj.target > 0) {
@@ -965,7 +967,7 @@
                     const pengeluaranBulanIni = AppState.db.expense.filter(e => e.date.startsWith(filterBulan) && e.plotId === plt);
                     const totalPakai = pengeluaranBulanIni.reduce((sum, e) => sum + e.amount, 0);
                     if ((totalPakai + nom) > plotObj.target) {
-                        return showPopup('confirm', `Peringatan! Pengeluaran ini membuat Plot [${Utils.amanHTML(plotObj.name)}] melebihi target. Lanjutkan?`, 'var(--danger)', () => {
+                        return showPopup('confirm', `Peringatan! Pengeluaran ini membuat Plot [${Utils.amanHTML(plotObj.name)}] melebihi target. Lanjutkan?`, warnaTema, () => {
                             prosesSimpanAkhir(tipe, tgl, ket, nom, dmp, plt, pfx);
                         });
                     }
@@ -984,16 +986,23 @@
     }
 
     function editData(tipe, idItem) {
-        if (tipe === 'mutations') return showPopup('alert', "Mutasi tidak bisa diedit. Hapus (✕) dan buat ulang.", 'var(--blue)');
+        if (tipe === 'mutations') return showPopup('alert', "Mutasi tidak bisa diedit. Hapus (✕) dan buat ulang.", '#ffffff');
         const data = AppState.db[tipe].find(i => i.id === idItem);
         if (!data) return;
-        const titleColor = tipe === 'income' ? '#ffffff' : 'var(--danger)';
+        
+        const titleColor = tipe === 'income' ? 'var(--wa-green)' : 'var(--danger)';
         const elTitle = document.getElementById('edit-modal-title');
         elTitle.innerText = tipe === 'income' ? 'Edit Pemasukan' : 'Edit Pengeluaran';
         elTitle.style.color = titleColor;
+        
+        document.querySelector('#edit-modal .modal-box').style.borderColor = titleColor;
+        
         const btnSave = document.getElementById('edit-btn-save');
-        btnSave.style.backgroundColor = titleColor;
-        btnSave.style.color = tipe === 'income' ? '#000' : '#fff';
+        btnSave.style.cssText = `background-color: #222222 !important; color: ${titleColor} !important; border: 1px solid ${titleColor} !important;`;
+        
+        const btnCancel = document.getElementById('edit-btn-cancel');
+        btnCancel.style.cssText = `background-color: #222222 !important; color: ${titleColor} !important; border: 1px solid ${titleColor} !important;`;
+        
         document.getElementById('edit-date').dataset.rawDate = data.date;
         document.getElementById('edit-date').value = Utils.formatTglTampil(data.date);
         document.getElementById('edit-desc').value = data.desc;
@@ -1014,9 +1023,10 @@
         
         updateWalletDropdownBalances();
         document.getElementById('edit-modal').classList.remove('hidden');
+        
         btnSave.onclick = () => {
             const nomBaru = Math.abs(Number(document.getElementById('edit-amount').value.replace(/\./g, '')));
-            if (isNaN(nomBaru) || nomBaru <= 0) return showPopup('alert', "Jumlah tidak valid!", 'var(--danger)');
+            if (isNaN(nomBaru) || nomBaru <= 0) return showPopup('alert', "Jumlah tidak valid!", titleColor);
             const dompetBaru = document.getElementById('edit-wallet').value;
             const tglBaru = document.getElementById('edit-date').dataset.rawDate;
             const descBaru = document.getElementById('edit-desc').value.trim();
@@ -1024,10 +1034,11 @@
             const nominalLama = data.amount, dompetLama = data.wallet, plotLama = data.plotId, tglLama = data.date, descLamaAsli = data.desc;
             data.amount = nomBaru; data.wallet = dompetBaru; data.date = tglBaru; data.desc = descBaru;
             if (tipe === 'expense') data.plotId = plotBaru;
+            
             if (getSaldoDompet('Tunai') < 0 || getSaldoDompet('Bank') < 0 || getSaldoDompet('e-Wallet') < 0) {
                 data.amount = nominalLama; data.wallet = dompetLama; data.date = tglLama; data.desc = descLamaAsli;
                 if (tipe === 'expense') data.plotId = plotLama;
-                return showPopup('alert', "Batal: Saldo akan minus!", 'var(--danger)');
+                return showPopup('alert', "Batal: Saldo akan minus!", titleColor);
             }
             if (tipe === 'expense' && plotBaru) {
                 const plotObj = AppState.db.plots.find(p => p.id === plotBaru);
@@ -1036,7 +1047,7 @@
                     let totalPakai = AppState.db.expense.filter(e => e.date.startsWith(filterBulan) && e.plotId === plotBaru && e.id !== idItem).reduce((sum, e) => sum + e.amount, 0);
                     if ((totalPakai + nomBaru) > plotObj.target) {
                         data.amount = nominalLama; data.wallet = dompetLama; data.date = tglLama; data.desc = descLamaAsli; data.plotId = plotLama;
-                        return showPopup('confirm', `Peringatan! Melebihi target Plot [${Utils.amanHTML(plotObj.name)}]. Lanjutkan?`, 'var(--danger)', () => {
+                        return showPopup('confirm', `Peringatan! Melebihi target Plot [${Utils.amanHTML(plotObj.name)}]. Lanjutkan?`, titleColor, () => {
                             prosesSimpanEditAkhir(data, nomBaru, dompetBaru, tglBaru, descBaru, plotBaru, tipe);
                         });
                     }
@@ -1050,9 +1061,9 @@
     function deleteItem(event, tipe, idItem) {
         event.stopPropagation();
         const dataTarget = AppState.db[tipe].find(x => x.id === idItem);
-        if (tipe === 'income' && (getSaldoDompet(dataTarget.wallet) - dataTarget.amount < 0)) return showPopup('alert', `Batal: Saldo akan minus!`, 'var(--danger)');
-        if (tipe === 'mutations' && (getSaldoDompet(dataTarget.to) - dataTarget.amount < 0)) return showPopup('alert', `Batal: Saldo akan minus!`, 'var(--danger)');
-        showPopup('delete', "HAPUS RIWAYAT!!", 'var(--danger)', () => {
+        if (tipe === 'income' && (getSaldoDompet(dataTarget.wallet) - dataTarget.amount < 0)) return showPopup('alert', `Batal: Saldo akan minus!`, '#ffffff');
+        if (tipe === 'mutations' && (getSaldoDompet(dataTarget.to) - dataTarget.amount < 0)) return showPopup('alert', `Batal: Saldo akan minus!`, '#ffffff');
+        showPopup('delete', "HAPUS RIWAYAT!!", '#ffffff', () => {
             AppState.db[tipe] = AppState.db[tipe].filter(x => x.id !== idItem);
             simpanDatabase(); updateRekap(); updatePlotList(); updateWalletDropdownBalances();
         });
@@ -1064,9 +1075,9 @@
     function processMutation() {
         const asal = document.getElementById('mut-from').value, tujuan = document.getElementById('mut-to').value;
         const nominal = Number(document.getElementById('mut-amount').value.replace(/\./g, ''));
-        if (asal === tujuan) return showPopup('alert', 'Dompet asal & tujuan sama!', 'var(--blue)');
-        if (isNaN(nominal) || nominal <= 0) return showPopup('alert', 'Jumlah tidak valid!', 'var(--blue)');
-        if (getSaldoDompet(asal) < nominal) return showPopup('alert', `Saldo [${asal}] tidak cukup!`, 'var(--blue)');
+        if (asal === tujuan) return showPopup('alert', 'Dompet asal & tujuan sama!', '#ffffff');
+        if (isNaN(nominal) || nominal <= 0) return showPopup('alert', 'Jumlah tidak valid!', '#ffffff');
+        if (getSaldoDompet(asal) < nominal) return showPopup('alert', `Saldo [${asal}] tidak cukup!`, '#ffffff');
         const tglMutasi = document.getElementById('rekap-date-picker').dataset.rawDate || Utils.tglHariIni();
         AppState.db.mutations.push({ id: Utils.buatId(), date: tglMutasi, from: asal, to: tujuan, amount: nominal });
         simpanDatabase(); closeMutationModal(); updateRekap(); updateWalletDropdownBalances();
@@ -1075,7 +1086,7 @@
 
     function savePlot() {
         const nama = document.getElementById('plot-name').value.trim(), target = Math.abs(Number(document.getElementById('plot-amount').value.replace(/\./g, '')));
-        if (!nama || isNaN(target) || target <= 0) return showPopup('alert', "Isi Nama & Target dengan benar!", 'var(--gold)');
+        if (!nama || isNaN(target) || target <= 0) return showPopup('alert', "Isi Nama & Target dengan benar!", '#ffffff');
         AppState.db.plots.push({ id: Utils.buatId(), name: nama, target: target });
         simpanDatabase(); document.getElementById('plot-name').value = ''; document.getElementById('plot-amount').value = '';
         updatePlotList(); showPopup('alert', "Alokasi Dibuat!", '#ffffff');
@@ -1087,7 +1098,7 @@
             if (!val) return;
             if (isAngka) {
                 const newTarget = Math.abs(Number(val.replace(/\./g, '')));
-                if (isNaN(newTarget) || newTarget <= 0) return showPopup('alert', 'Target tidak valid!', 'var(--danger)');
+                if (isNaN(newTarget) || newTarget <= 0) return showPopup('alert', 'Target tidak valid!', '#ffffff');
                 plot[jenis] = newTarget;
             } else { plot[jenis] = val.trim(); }
             simpanDatabase(); updatePlotList(); updateRekap();
@@ -1095,7 +1106,7 @@
     }
 
     function deletePlot(idPlot) {
-        showPopup('delete', "Hapus plot ini? (Data riwayat tetap ada)", 'var(--danger)', () => {
+        showPopup('delete', "Hapus plot ini? (Data riwayat tetap ada)", '#ffffff', () => {
             AppState.db.plots = AppState.db.plots.filter(p => p.id !== idPlot);
             AppState.db.expense.forEach(e => { if (e.plotId === idPlot) e.plotId = ""; });
             simpanDatabase(); updatePlotList(); updateRekap();
@@ -1146,7 +1157,6 @@
             document.getElementById('clear-search-btn').classList.add('hidden'); 
         }
         
-        // PENCARIAN SUPER CERDAS GLOBAL (Cari String Tanggal, Keterangan, Nominal, Dompet)
         const gabungan = [
             ...AppState.db.income.map(i => ({...i, type:'income', walletInfo: i.wallet})), 
             ...AppState.db.expense.map(e => ({...e, type:'expense', walletInfo: e.wallet})), 
@@ -1163,15 +1173,12 @@
             return item.date === tglSortir;
         });
 
-        // 🛡️ PENYUNTIKAN LOGIKA: TIMESTAMP SORT & REVERSE 
-        // 1. Urutkan berdasarkan ID (yang mengandung timestamp milidetik) dari yang tertua ke terbaru
         gabungan.sort((a, b) => {
             if (a.id < b.id) return -1;
             if (a.id > b.id) return 1;
             return 0;
         });
 
-        // 2. Balikkan urutannya agar yang paling baru (ID paling besar) ada di urutan paling atas array
         gabungan.reverse();
         
         let htmlMasuk = '', htmlKeluar = ''; 
@@ -1212,14 +1219,13 @@
     function openChartModal() { document.getElementById('balance-dropdown').classList.add('hidden'); document.getElementById('chart-modal').classList.remove('hidden'); setTimeout(renderGrafik, 50); }
     function closeChartModal() { document.getElementById('chart-modal').classList.add('hidden'); }
 
-    // AUTO-COLOR GENERATOR UNTUK GRAFIK KEUANGANNILA (Tone lebih estetik/pastel)
     function getDynamicColor(index) {
-        const estetikColors = [
-            '#C71585', '#6495ED', '#66CDAA', '#9370DB', '#ff9f43', '#00d2d3', '#ff5e57', 
-            '#5f27cd', '#10ac84', '#c8d6e5', '#FFB6C1', '#20B2AA', '#87CEFA', '#FFA07A',
-            '#DDA0DD', '#F08080', '#00CED1', '#FF69B4'
+        const brightColors = [
+            '#FF6B6B', '#4ECDC4', '#C7F464', '#FFE66D', '#FFD166', '#EF476F', 
+            '#118AB2', '#073B4C', '#A05195', '#F15BB5', '#00F5D4', '#9B5DE5',
+            '#FEE440', '#00BBF9', '#F1948A', '#8338EC', '#3A86FF', '#FF006E'
         ];
-        return estetikColors[index % estetikColors.length];
+        return brightColors[index % brightColors.length];
     }
 
     function renderGrafik() {
@@ -1230,15 +1236,14 @@
         let pengeluaranMap = {}; 
         let totalKeluar = 0;
         
-        // GRAFIK RINCIAN PENGELUARAN BERDASARKAN BULAN YANG TERPILIH DI REKAP
         const filterBulan = d.filterDate ? d.filterDate.substring(0, 7) : Utils.tglHariIni().substring(0, 7);
 
         AppState.db.expense.forEach(e => {
             if (e.date.startsWith(filterBulan)) {
-                let pName = e.desc; // Keterangan transaksi biasa
+                let pName = e.desc; 
                 if (e.plotId) { 
                     const plotObj = AppState.db.plots.find(p => p.id === e.plotId); 
-                    if (plotObj) pName = plotObj.name; // Timpa dengan nama plot jika ada
+                    if (plotObj) pName = plotObj.name; 
                 }
                 
                 if (!pengeluaranMap[pName]) pengeluaranMap[pName] = 0;
@@ -1256,7 +1261,7 @@
             colorIndex++; 
         }
         
-        if (totalKeluar === 0) { labelsRinci = ['Kosong']; dataRinci = [1]; colorRinci = ['#2a3942']; }
+        if (totalKeluar === 0) { labelsRinci = ['Kosong']; dataRinci = [1]; colorRinci = ['#333333']; }
         
         AppState.charts.arusKas = new Chart(document.getElementById('cashChart').getContext('2d'), { 
             type: 'doughnut', 
@@ -1264,7 +1269,6 @@
             options: { cutout: '70%', plugins: { legend: { display: false } }, animation: { duration: 500 } } 
         });
         
-        // GRAFIK PORTOFOLIO DOMPET (WARNA PATEN)
         const portTotal = d.tunai + d.bank + d.ewal, portKosong = portTotal <= 0;
         AppState.charts.portofolio = new Chart(document.getElementById('portChart').getContext('2d'), { 
             type: 'doughnut', 
@@ -1272,8 +1276,7 @@
                 labels: portKosong ? ['Kosong'] : ['Tunai', 'Bank', 'e-Wallet'], 
                 datasets: [{ 
                     data: portKosong ? [1] : [Math.max(d.tunai, 0), Math.max(d.bank, 0), Math.max(d.ewal, 0)], 
-                    // Warna Paten: Hijau, Biru, Orange
-                    backgroundColor: portKosong ? ['#2a3942'] : ['#2ecc71', '#3498db', '#f39c12'], 
+                    backgroundColor: portKosong ? ['#333333'] : ['#2ecc71', '#3498db', '#f39c12'], 
                     borderWidth: 0 
                 }] 
             }, 
@@ -1287,7 +1290,7 @@
     function exportToExcel() {
         document.getElementById('dropdown-menu').classList.add('hidden');
         const gabungan = [...AppState.db.income.map(x => ({ID: x.id, Tanggal: x.date, Tipe: 'DEBIT', Dompet: x.wallet || 'Tunai', Keterangan: x.desc, Jumlah: x.amount, PlotID: ''})), ...AppState.db.expense.map(x => ({ID: x.id, Tanggal: x.date, Tipe: 'KREDIT', Dompet: x.wallet || 'Tunai', Keterangan: x.desc, Jumlah: x.amount, PlotID: x.plotId || ''})), ...AppState.db.mutations.map(x => ({ID: x.id, Tanggal: x.date, Tipe: 'MUTASI', Dari: x.from, Ke: x.to, Keterangan: 'Transfer Mutasi', Jumlah: x.amount, PlotID: ''}))].sort((a, b) => new Date(a.Tanggal) - new Date(b.Tanggal));
-        if (!gabungan.length) return showPopup('alert', "Belum ada catatan!", 'var(--excel)');
+        if (!gabungan.length) return showPopup('alert', "Belum ada catatan!", '#ffffff');
         const wsTrans = XLSX.utils.json_to_sheet(gabungan), wb = XLSX.utils.book_new(); 
         XLSX.utils.book_append_sheet(wb, wsTrans, "RekapKeuangan");
         if(AppState.db.plots.length > 0) { const plotData = AppState.db.plots.map(p => ({ID: p.id, Nama: p.name, Target: p.target})); const wsPlot = XLSX.utils.json_to_sheet(plotData); XLSX.utils.book_append_sheet(wb, wsPlot, "Daftar_Plot"); }
@@ -1310,7 +1313,7 @@
                 AppState.tempImport = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
                 AppState.tempImportPlots = wb.SheetNames.includes("Daftar_Plot") ? XLSX.utils.sheet_to_json(wb.Sheets["Daftar_Plot"]) : [];
                 document.getElementById('import-modal').classList.remove('hidden');
-            } catch (err) { showPopup('alert', "Format File tidak dikenali.", '#ff3b30'); } finally { e.target.value = ''; }
+            } catch (err) { showPopup('alert', "Format File tidak dikenali.", '#ffffff'); } finally { e.target.value = ''; }
         }; reader.readAsArrayBuffer(file);
     }
 
@@ -1335,7 +1338,7 @@
 
     function promptClearData() {
         document.getElementById('dropdown-menu').classList.add('hidden');
-        showPopup('delete', "HAPUS SEMUA DATA?", '#ff3b30', () => { localStorage.removeItem('myMoneyDB'); AppState.db = { income: [], expense: [], mutations: [], plots: [] }; simpanDatabase(); updateRekap(); updatePlotList(); updateWalletDropdownBalances(); showPopup('alert', "Data Kosong.", '#ff3b30'); });
+        showPopup('delete', "HAPUS SEMUA DATA?", 'var(--danger)', () => { localStorage.removeItem('myMoneyDB'); AppState.db = { income: [], expense: [], mutations: [], plots: [] }; simpanDatabase(); updateRekap(); updatePlotList(); updateWalletDropdownBalances(); showPopup('alert', "Data Kosong.", 'var(--danger)'); });
     }
 
     // =========================================================
@@ -1344,18 +1347,63 @@
     const Picker = { mode: 'date', curr: new Date(), sel: new Date(), targetId: '', theme: '' };
     const NamaBln = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'], BlnPdk = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
     function inisiasiKalenderAwal() { const hrIni = Utils.tglHariIni(); ['in-date', 'out-date', 'rekap-date-picker'].forEach(id => { const el = document.getElementById(id); if (el) { el.dataset.rawDate = hrIni; el.value = Utils.formatTglTampil(hrIni); } }); const blnIni = hrIni.substring(0, 7), elPlot = document.getElementById('plot-month-filter'); if (elPlot) { elPlot.dataset.rawDate = blnIni; elPlot.value = `${BlnPdk[parseInt(blnIni.split('-')[1], 10)-1]} ${blnIni.split('-')[0]}`; } }
-    function openPicker(id, m, w) { Picker.targetId = id; Picker.mode = m; Picker.theme = w; const val = document.getElementById(id).dataset.rawDate; Picker.sel = new Date(m === 'month' ? val + "-01T00:00:00" : val + "T00:00:00"); Picker.curr = new Date(Picker.sel); document.getElementById('cp-day-view').classList.toggle('hidden', m !== 'date'); document.getElementById('cp-month-view').classList.toggle('hidden', m === 'date'); document.getElementById('cp-today-btn').innerText = m === 'date' ? 'Hari Ini' : 'Bulan Ini'; const btnSet = document.getElementById('cp-setel-btn'); btnSet.style.backgroundColor = w; document.getElementById('cp-title').style.color = w; btnSet.style.color = (w === '#ff3b30' || w === 'var(--danger)') ? '#fff' : '#000'; renderKalender(); document.getElementById('custom-picker').classList.remove('hidden'); }
+    
+    function openPicker(id, m, w) { 
+        Picker.targetId = id; Picker.mode = m; Picker.theme = w; 
+        const val = document.getElementById(id).dataset.rawDate; 
+        Picker.sel = new Date(m === 'month' ? val + "-01T00:00:00" : val + "T00:00:00"); 
+        Picker.curr = new Date(Picker.sel); 
+        document.getElementById('cp-day-view').classList.toggle('hidden', m !== 'date'); 
+        document.getElementById('cp-month-view').classList.toggle('hidden', m === 'date'); 
+        document.getElementById('cp-today-btn').innerText = m === 'date' ? 'Hari Ini' : 'Bulan Ini'; 
+        
+        document.getElementById('cp-title').style.color = w; 
+        document.querySelector('#custom-picker .picker-box').style.borderColor = w;
+        
+        const btnBatal = document.querySelector('#custom-picker .modal-actions button:nth-child(1)');
+        const btnHariIni = document.getElementById('cp-today-btn');
+        const btnSetel = document.getElementById('cp-setel-btn');
+        
+        btnBatal.style.cssText = `background-color: #222222 !important; color: ${w} !important; border: 1px solid ${w} !important;`;
+        btnHariIni.style.cssText = `background-color: #222222 !important; color: ${w} !important; border: 1px solid ${w} !important;`;
+        btnSetel.style.cssText = `background-color: #222222 !important; color: ${w} !important; border: 1px solid ${w} !important;`;
+        
+        renderKalender(); 
+        document.getElementById('custom-picker').classList.remove('hidden'); 
+    }
+    
     function closePicker() { document.getElementById('custom-picker').classList.add('hidden'); }
     function cpChange(arah) { Picker.mode === 'date' ? Picker.curr.setMonth(Picker.curr.getMonth() + arah) : Picker.curr.setFullYear(Picker.curr.getFullYear() + arah); renderKalender(); }
     function cpSelectDay(t) { Picker.sel = new Date(Picker.curr.getFullYear(), Picker.curr.getMonth(), t); renderKalender(); }
     function cpSelectMonth(b) { Picker.sel = new Date(Picker.curr.getFullYear(), b, 1); renderKalender(); }
     function cpSetToday() { const d = new Date(); Picker.sel = new Date(d.getFullYear(), d.getMonth(), Picker.mode === 'date' ? d.getDate() : 1); Picker.curr = new Date(Picker.sel); setPickerDate(); }
     function setPickerDate() { const y = Picker.sel.getFullYear(), m = String(Picker.sel.getMonth() + 1).padStart(2, '0'), d = String(Picker.sel.getDate()).padStart(2, '0'), el = document.getElementById(Picker.targetId); if (Picker.mode === 'date') { const ymd = `${y}-${m}-${d}`; el.dataset.rawDate = ymd; el.value = Utils.formatTglTampil(ymd); } else { const ym = `${y}-${m}`; el.dataset.rawDate = ym; el.value = `${BlnPdk[Picker.sel.getMonth()]} ${y}`; } closePicker(); if (Picker.targetId === 'rekap-date-picker') updateRekap(); if (Picker.targetId === 'plot-month-filter') updatePlotList(); }
-    function renderKalender() { if (Picker.mode === 'date') { document.getElementById('cp-title').innerText = `${NamaBln[Picker.curr.getMonth()]} ${Picker.curr.getFullYear()}`; const wadah = document.getElementById('cp-grid-days'); let h = ''; const h1 = new Date(Picker.curr.getFullYear(), Picker.curr.getMonth(), 1).getDay(), tot = new Date(Picker.curr.getFullYear(), Picker.curr.getMonth() + 1, 0).getDate(); for (let i = 0; i < h1; i++) h += `<div class="picker-item empty"></div>`; for (let i = 1; i <= tot; i++) { const isS = (i === Picker.sel.getDate() && Picker.curr.getMonth() === Picker.sel.getMonth() && Picker.curr.getFullYear() === Picker.sel.getFullYear()); h += `<div class="picker-item ${isS ? 'selected' : ''}" style="${isS ? `background:${Picker.theme};` : ''}" onclick="cpSelectDay(${i})">${i}</div>`; } wadah.innerHTML = h; } else { document.getElementById('cp-title').innerText = `${Picker.curr.getFullYear()}`; const wadah = document.getElementById('cp-month-view'); let h = ''; for (let i = 0; i < 12; i++) { const isS = (i === Picker.sel.getMonth() && Picker.curr.getFullYear() === Picker.sel.getFullYear()); h += `<div class="picker-item ${isS ? 'selected' : ''}" style="${isS ? `background:${Picker.theme};` : ''}" onclick="cpSelectMonth(${i})">${BlnPdk[i]}</div>`; } wadah.innerHTML = h; } }
+    
+    function renderKalender() { 
+        if (Picker.mode === 'date') { 
+            document.getElementById('cp-title').innerText = `${NamaBln[Picker.curr.getMonth()]} ${Picker.curr.getFullYear()}`; 
+            const wadah = document.getElementById('cp-grid-days'); let h = ''; 
+            const h1 = new Date(Picker.curr.getFullYear(), Picker.curr.getMonth(), 1).getDay(), tot = new Date(Picker.curr.getFullYear(), Picker.curr.getMonth() + 1, 0).getDate(); 
+            for (let i = 0; i < h1; i++) h += `<div class="picker-item empty"></div>`; 
+            for (let i = 1; i <= tot; i++) { 
+                const isS = (i === Picker.sel.getDate() && Picker.curr.getMonth() === Picker.sel.getMonth() && Picker.curr.getFullYear() === Picker.sel.getFullYear()); 
+                h += `<div class="picker-item ${isS ? 'selected' : ''}" style="${isS ? `background-color:${Picker.theme} !important; color:#000 !important;` : ''}" onclick="cpSelectDay(${i})">${i}</div>`; 
+            } 
+            wadah.innerHTML = h; 
+        } else { 
+            document.getElementById('cp-title').innerText = `${Picker.curr.getFullYear()}`; 
+            const wadah = document.getElementById('cp-month-view'); let h = ''; 
+            for (let i = 0; i < 12; i++) { 
+                const isS = (i === Picker.sel.getMonth() && Picker.curr.getFullYear() === Picker.sel.getFullYear()); 
+                h += `<div class="picker-item ${isS ? 'selected' : ''}" style="${isS ? `background-color:${Picker.theme} !important; color:#000 !important;` : ''}" onclick="cpSelectMonth(${i})">${BlnPdk[i]}</div>`; 
+            } 
+            wadah.innerHTML = h; 
+        } 
+    }
 
     function terapkanVersi() {
         const elVersi = document.getElementById('app-version-display');
-        if (elVersi) elVersi.innerText = `VERSI 3.2`;
+        if (elVersi) elVersi.innerText = `VERSI 3.4`;
     }
 
     window.addEventListener('DOMContentLoaded', () => { muatDatabase(); inisiasiKalenderAwal(); updatePlotList(); updateRekap(); updateWalletDropdownBalances(); jalankanJam(); terapkanVersi(); });
