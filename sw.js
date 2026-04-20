@@ -2,7 +2,7 @@
  * SERVICE WORKER uanga famBARLA (FINAL ABSOLUT + NETWORK SECURITY BUGFIX)
  */
 
-const APP_VERSION = '3.9'; 
+const APP_VERSION = '4.0'; 
 
 const CACHE_STATIC = 'uanga-static-v' + APP_VERSION;
 const CACHE_DYNAMIC = 'uanga-dynamic-v' + APP_VERSION;
