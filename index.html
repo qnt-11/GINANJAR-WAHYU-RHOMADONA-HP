@@ -195,7 +195,7 @@
         .wallet-card span { font-size: 10px; color: var(--text-light); font-weight: 700; } 
 
         /* ================= KOTAK HISTORY ================= */
-        .history-columns { display: flex; gap: 8px; flex: 1; min-height: 0; flex-shrink: 1;}
+        .history-columns { display: flex; gap: 8px; flex: 1; min-height: 0; flex-shrink: 1; width: 100%;}
         .history-col {
             flex: 1; background: var(--wa-card); border-radius: 12px; 
             padding: 8px; padding-bottom: 0; border: 1px solid var(--border-color);
@@ -204,7 +204,7 @@
         #history-debit h4 { color: var(--text-light); border-bottom: 1px solid var(--border-color); background-color: transparent !important; }
         #history-kredit h4 { color: var(--danger); border-bottom: 1px solid var(--border-color); background-color: transparent !important; }
         .history-col h4 { margin: 0 0 6px 0; padding: 0 0 6px 0; text-align: center; font-size: 12px; text-transform: uppercase; } 
-        .history-col ul { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; min-height: 0; padding-bottom: 30px; } /* Fix Padding Bawah Watermark */
+        .history-col ul { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; min-height: 0; padding-bottom: 30px; } 
         .history-col ul::-webkit-scrollbar { width: 3px; }
         .history-col ul::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
         .history-col li { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border-color); gap: 6px; }
@@ -427,12 +427,12 @@
                 <div class="wallet-card"><small>E-WALLET</small><span id="bal-ewallet">0</span></div>
             </div>
             
-            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-                <div class="card" style="padding: 10px; margin-bottom: 0; border-color: var(--border-color); flex: 1; display: flex; flex-direction: column; box-sizing: border-box;">
+            <div style="display: flex; gap: 8px; margin-bottom: 10px; width: 100%;">
+                <div class="card" style="padding: 10px; margin-bottom: 0; border-color: var(--border-color); flex: 1; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center;">
                     <label style="font-size:10px; margin-bottom: 4px; font-family: 'Montserrat', sans-serif;">PILIH BULAN RIWAYAT:</label>
                     <input type="text" id="rekap-date-picker" readonly onclick="openPicker('rekap-date-picker', 'month', '#ffffff')" style="padding:10px; text-align: center;">
                 </div>
-                <button class="btn-main btn-white font-audiowide" onclick="openMutationModal()" style="margin-top: 0; margin-bottom: 0; border-radius: 12px; flex: 1; padding: 10px; font-size: 11px; box-sizing: border-box;">⇄ Mutasi Saldo</button>
+                <button class="btn-main font-audiowide" onclick="openMutationModal()" style="margin-top: 0; margin-bottom: 0; border-radius: 12px; flex: 1; padding: 10px; font-size: 11px; box-sizing: border-box; background-color: var(--wa-card) !important; border: 1px solid var(--border-color) !important; color: var(--text-light) !important;">⇄ Mutasi Saldo</button>
             </div>
 
         </div>
@@ -500,7 +500,7 @@
                     <span class="letter" style="animation-delay: 1.4s">B</span><span class="letter" style="animation-delay: 1.6s">A</span><span class="letter" style="animation-delay: 1.8s">R</span><span class="letter" style="animation-delay: 2.0s">L</span><span class="letter" style="animation-delay: 2.2s">A</span>
                 </span>
             </h2>
-            <small id="app-version-display" style="color: var(--text-muted); font-family: 'Montserrat', sans-serif; font-weight: 700; letter-spacing: 1px; font-size: 10px;">VERSI 1.0</small>
+            <small id="app-version-display" style="color: var(--text-muted); font-family: 'Montserrat', sans-serif; font-weight: 700; letter-spacing: 1px; font-size: 10px;">VERSI 1.2</small>
         </div>
         <div style="font-size: 13px; line-height: 1.6; color: #ffffff; font-family: 'Montserrat', sans-serif;">
             <div style="background: var(--wa-header); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
@@ -586,7 +586,7 @@
     // =========================================================
     // 1. PENGATURAN AWAL & DATABASE 
     // =========================================================
-    const APP_VERSION = "1.0"; 
+    const APP_VERSION = "1.2"; 
     const CLOUD_URL = "https://script.google.com/macros/s/AKfycbwb0SJIbBzZvZ74s1z1OGsHZuwB_sq3b7R91BnuGdawxpP69bTDVyC1IeozUQYezTgQ/exec";
 
     if ('serviceWorker' in navigator) {
@@ -665,6 +665,7 @@
             let cursorPos = input.selectionStart;
             const originalLength = input.value.length;
             let bersih = input.value.replace(/[^0-9]/g, '');
+            if (bersih.length > 15) bersih = bersih.substring(0, 15); // BUG FIX: Anti angka kepanjangan
             input.value = bersih ? parseInt(bersih, 10).toLocaleString('id-ID') : '';
             const newLength = input.value.length;
             cursorPos = cursorPos + (newLength - originalLength);
@@ -688,15 +689,21 @@
         if (el) el.addEventListener('input', Utils.formatRibuanInput);
     });
 
-    // Pindahkan ke event blur agar kursor tidak melompat saat mengetik di tengah kalimat
+    // BUG FIX: Auto Capitalize tanpa membuat kursor loncat
     function autoCapitalizeTitleCase(e) {
         const input = e.target;
+        let start = input.selectionStart;
+        let end = input.selectionEnd;
         const val = input.value;
-        input.value = val.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
+        const newVal = val.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
+        if (val !== newVal) {
+            input.value = newVal;
+            input.setSelectionRange(start, end);
+        }
     }
     ['in-desc', 'out-desc', 'edit-desc', 'plot-name'].forEach(id => {
         const el = document.getElementById(id);
-        if(el) el.addEventListener('blur', autoCapitalizeTitleCase);
+        if(el) el.addEventListener('input', autoCapitalizeTitleCase);
     });
 
     // =========================================================
@@ -766,15 +773,20 @@
         }
     }
 
-    function openAboutModal() { document.getElementById('dropdown-menu').classList.add('hidden'); document.getElementById('about-modal').classList.remove('hidden'); }
+    function openAboutModal() { document.getElementById('dropdown-menu').classList.add('hidden'); document.getElementById('balance-dropdown').classList.add('hidden'); document.getElementById('about-modal').classList.remove('hidden'); }
     function closeAboutModal() { document.getElementById('about-modal').classList.add('hidden'); }
 
     // =========================================================
     // 4. KODE CLOUD BACKUP & LOAD 
     // =========================================================
     function backupToCloud() {
-        const dropdownMenu = document.getElementById('dropdown-menu');
-        if (dropdownMenu) dropdownMenu.classList.add('hidden');
+        document.getElementById('dropdown-menu').classList.add('hidden');
+        
+        // BUG FIX: Cegah upload cloud jika semua data kosong (Kiamat Cloud)
+        if (AppState.db.income.length === 0 && AppState.db.expense.length === 0 && AppState.db.mutations.length === 0 && AppState.db.plots.length === 0) {
+            return showPopup('alert', "Data di HP kosong! Upload dibatalkan agar tidak menghapus cloud.", 'var(--danger)');
+        }
+
         if(!CLOUD_URL || CLOUD_URL.includes("ISI_DENGAN")) return showPopup('alert', "Penyimpanan Cloud belum disetel!", 'var(--danger)');
         
         showPopup('loading', "Mengunggah data ke Cloud...\nMohon tunggu sebentar.", 'var(--cloud)');
@@ -885,7 +897,6 @@
         document.getElementById('out-date').dataset.rawDate = hrIni;
         document.getElementById('out-date').value = formatHrIni;
 
-        // Reset filter riwayat ke bulan saat ini
         const blnIni = hrIni.substring(0, 7); 
         ['plot-month-filter', 'rekap-date-picker'].forEach(id => {
             const el = document.getElementById(id); 
@@ -896,6 +907,7 @@
         document.getElementById('in-amount').value = '';
         document.getElementById('out-desc').value = '';
         document.getElementById('out-amount').value = '';
+        document.getElementById('rekap-search').value = ''; // Bersihkan pencarian hantu
 
         setCustomVal('in-wallet', 'in-wallet-trigger', 'in-wallet-opts', 'Tunai');
         setCustomVal('out-wallet', 'out-wallet-trigger', 'out-wallet-opts', 'Tunai');
@@ -983,8 +995,7 @@
     }
 
     function showPage(event, idHalaman) {
-        const dropdownMenu = document.getElementById('dropdown-menu');
-        if (dropdownMenu) dropdownMenu.classList.add('hidden');
+        document.getElementById('dropdown-menu').classList.add('hidden');
         document.getElementById('balance-dropdown').classList.add('hidden');
         document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -997,6 +1008,9 @@
         document.getElementById('in-date').value = formatHrIni;
         document.getElementById('out-date').dataset.rawDate = hrIni;
         document.getElementById('out-date').value = formatHrIni;
+        
+        // BUG FIX: Hapus pencarian hantu otomatis
+        document.getElementById('rekap-search').value = '';
 
         if (idHalaman === 'rekap') updateRekap();
         if (idHalaman === 'plot') updatePlotList();
@@ -1066,13 +1080,18 @@
         const pfx = tipe === 'income' ? 'in' : 'out';
         const tgl = document.getElementById(`${pfx}-date`).dataset.rawDate;
         const ket = document.getElementById(`${pfx}-desc`).value.trim();
-        const nom = Math.abs(Number(document.getElementById(`${pfx}-amount`).value.replace(/[^0-9]/g, '')));
+        
+        // BUG FIX: Blokir jika kosong murni atau hanya angka 0
+        const rawAmount = document.getElementById(`${pfx}-amount`).value.trim();
+        const nom = Math.abs(Number(rawAmount.replace(/[^0-9]/g, '')));
+        
         const dmp = document.getElementById(`${pfx}-wallet`).value;
         const plt = tipe === 'expense' ? document.getElementById('out-plot').value : null;
         
         const warnaTema = tipe === 'income' ? 'var(--wa-green)' : 'var(--danger)';
 
-        if (!tgl || isNaN(nom) || nom <= 0 || !ket) return showPopup('alert', "Mohon lengkapi semua data dengan benar!", warnaTema);
+        if (!tgl || rawAmount === '' || isNaN(nom) || nom <= 0 || !ket) return showPopup('alert', "Mohon lengkapi semua data dengan benar!", warnaTema);
+        
         if (tipe === 'expense') {
             if (getSaldoDompet(dmp) < nom) return showPopup('alert', `Saldo [${dmp}] tidak mencukupi!`, warnaTema);
             if (plt) {
@@ -1140,8 +1159,10 @@
         document.getElementById('edit-modal').classList.remove('hidden');
         
         btnSave.onclick = () => {
-            const nomBaru = Math.abs(Number(document.getElementById('edit-amount').value.replace(/[^0-9]/g, '')));
-            if (isNaN(nomBaru) || nomBaru <= 0) return showPopup('alert', "Jumlah tidak valid!", titleColor);
+            const rawAmount = document.getElementById('edit-amount').value.trim();
+            const nomBaru = Math.abs(Number(rawAmount.replace(/[^0-9]/g, '')));
+            if (rawAmount === '' || isNaN(nomBaru) || nomBaru <= 0) return showPopup('alert', "Jumlah tidak valid!", titleColor);
+            
             const dompetBaru = document.getElementById('edit-wallet').value;
             const tglBaru = document.getElementById('edit-date').dataset.rawDate;
             const descBaru = document.getElementById('edit-desc').value.trim();
@@ -1193,14 +1214,21 @@
         });
     }
 
-    function openMutationModal() { document.getElementById('mutation-modal').classList.remove('hidden'); updateWalletDropdownBalances(); }
+    function openMutationModal() { 
+        document.getElementById('dropdown-menu').classList.add('hidden'); 
+        document.getElementById('balance-dropdown').classList.add('hidden'); 
+        document.getElementById('mutation-modal').classList.remove('hidden'); 
+        updateWalletDropdownBalances(); 
+    }
     function closeMutationModal() { document.getElementById('mutation-modal').classList.add('hidden'); document.getElementById('mut-amount').value = ''; }
 
     function processMutation() {
         const asal = document.getElementById('mut-from').value, tujuan = document.getElementById('mut-to').value;
-        const nominal = Math.abs(Number(document.getElementById('mut-amount').value.replace(/[^0-9]/g, '')));
+        const rawAmount = document.getElementById('mut-amount').value.trim();
+        const nominal = Math.abs(Number(rawAmount.replace(/[^0-9]/g, '')));
+        
         if (asal === tujuan) return showPopup('alert', 'Dompet asal & tujuan sama!', '#ffffff');
-        if (isNaN(nominal) || nominal <= 0) return showPopup('alert', 'Jumlah tidak valid!', '#ffffff');
+        if (rawAmount === '' || isNaN(nominal) || nominal <= 0) return showPopup('alert', 'Jumlah tidak valid!', '#ffffff');
         if (getSaldoDompet(asal) < nominal) return showPopup('alert', `Saldo [${asal}] tidak cukup!`, '#ffffff');
         
         const tglMutasi = Utils.tglHariIni(); 
@@ -1211,10 +1239,18 @@
     }
 
     function savePlot() {
-        const nama = document.getElementById('plot-name').value.trim(), target = Math.abs(Number(document.getElementById('plot-amount').value.replace(/[^0-9]/g, '')));
-        if (!nama || isNaN(target) || target <= 0) return showPopup('alert', "Isi Nama & Target dengan benar!", '#ffffff');
+        const nama = document.getElementById('plot-name').value.trim();
+        const rawAmount = document.getElementById('plot-amount').value.trim();
+        const target = Math.abs(Number(rawAmount.replace(/[^0-9]/g, '')));
+        
+        if (!nama || rawAmount === '' || isNaN(target) || target <= 0) return showPopup('alert', "Isi Nama & Target dengan benar!", '#ffffff');
         AppState.db.plots.push({ id: Utils.buatId(), name: nama, target: target });
         simpanDatabase(); document.getElementById('plot-name').value = ''; document.getElementById('plot-amount').value = '';
+        
+        // BUG FIX: Auto refresh dropdown plot yang amnesia
+        buildPlotOptions('out-plot-opts', 'out-plot-trigger', 'out-plot');
+        buildPlotOptions('edit-plot-opts', 'edit-plot-trigger', 'edit-plot-val');
+        
         updatePlotList(); showPopup('alert', "Alokasi Dibuat!", '#ffffff');
     }
 
@@ -1224,10 +1260,13 @@
             if (!val) return;
             if (isAngka) {
                 const newTarget = Math.abs(Number(val.replace(/[^0-9]/g, '')));
-                if (isNaN(newTarget) || newTarget <= 0) return showPopup('alert', 'Target tidak valid!', '#ffffff');
+                if (val.trim() === '' || isNaN(newTarget) || newTarget <= 0) return showPopup('alert', 'Target tidak valid!', '#ffffff');
                 plot[jenis] = newTarget;
             } else { plot[jenis] = val.trim(); }
             simpanDatabase(); updatePlotList(); updateRekap();
+            
+            buildPlotOptions('out-plot-opts', 'out-plot-trigger', 'out-plot');
+            buildPlotOptions('edit-plot-opts', 'edit-plot-trigger', 'edit-plot-val');
         }, plot[jenis], isAngka);
     }
 
@@ -1236,6 +1275,9 @@
             AppState.db.plots = AppState.db.plots.filter(p => p.id !== idPlot);
             AppState.db.expense.forEach(e => { if (e.plotId === idPlot) e.plotId = ""; });
             simpanDatabase(); updatePlotList(); updateRekap();
+            
+            buildPlotOptions('out-plot-opts', 'out-plot-trigger', 'out-plot');
+            buildPlotOptions('edit-plot-opts', 'edit-plot-trigger', 'edit-plot-val');
         });
     }
 
@@ -1281,7 +1323,7 @@
         if (kunciRaw) { 
             document.getElementById('rekap-focus-hide').classList.add('hidden'); 
             document.getElementById('clear-search-btn').classList.remove('hidden'); 
-            elMasuk.scrollTop = 0; elKeluar.scrollTop = 0;
+            elMasuk.scrollTop = 0; elKeluar.scrollTop = 0; // BUG FIX: Scroll otomatis ke atas
         } else { 
             document.getElementById('rekap-focus-hide').classList.remove('hidden'); 
             document.getElementById('clear-search-btn').classList.add('hidden'); 
@@ -1348,14 +1390,23 @@
         };
     }
 
-    function openChartModal() { document.getElementById('balance-dropdown').classList.add('hidden'); document.getElementById('chart-modal').classList.remove('hidden'); requestAnimationFrame(() => renderGrafik()); }
+    function openChartModal() { 
+        document.getElementById('dropdown-menu').classList.add('hidden'); 
+        document.getElementById('balance-dropdown').classList.add('hidden'); 
+        document.getElementById('chart-modal').classList.remove('hidden'); 
+        // BUG FIX: Hentikan balapan render grafik
+        requestAnimationFrame(() => renderGrafik()); 
+    }
     function closeChartModal() { document.getElementById('chart-modal').classList.add('hidden'); }
 
+    // BUG FIX: Palet Warna Abadi (Tidak akan pernah habis biarpun ada 50 Plot)
     function getDynamicColor(index) {
         const brightColors = [
             '#FF6B6B', '#4ECDC4', '#C7F464', '#FFE66D', '#FFD166', '#EF476F', 
             '#118AB2', '#073B4C', '#A05195', '#F15BB5', '#00F5D4', '#9B5DE5',
-            '#FEE440', '#00BBF9', '#F1948A', '#8338EC', '#3A86FF', '#FF006E'
+            '#FEE440', '#00BBF9', '#F1948A', '#8338EC', '#3A86FF', '#FF006E',
+            '#FFA69E', '#86BBD8', '#2F4858', '#F6AE2D', '#F26419', '#33658A',
+            '#820263', '#D90368', '#00CC66', '#E2C044', '#5BC0BE', '#E55934'
         ];
         return brightColors[index % brightColors.length];
     }
@@ -1417,23 +1468,20 @@
     // =========================================================
     // 8. EXCEL IMPORT / EXPORT 
     // =========================================================
-    function sanitizeExcel(str) {
-        if (typeof str === 'string' && /^[=+\-@]/.test(str)) return "'" + str;
-        return str;
-    }
-
+    
+    // BUG FIX: Membiarkan angka utuh menjadi angka (Tidak diberi kutip) agar enak dihitung di Excel
     function exportToExcel() {
         document.getElementById('dropdown-menu').classList.add('hidden');
         const gabungan = [
-            ...AppState.db.income.map(x => ({ID: x.id, Tanggal: x.date, Tipe: 'DEBIT', Dompet: x.wallet || 'Tunai', Keterangan: sanitizeExcel(x.desc), Jumlah: x.amount, PlotID: ''})), 
-            ...AppState.db.expense.map(x => ({ID: x.id, Tanggal: x.date, Tipe: 'KREDIT', Dompet: x.wallet || 'Tunai', Keterangan: sanitizeExcel(x.desc), Jumlah: x.amount, PlotID: x.plotId || ''})), 
+            ...AppState.db.income.map(x => ({ID: x.id, Tanggal: x.date, Tipe: 'DEBIT', Dompet: x.wallet || 'Tunai', Keterangan: x.desc, Jumlah: x.amount, PlotID: ''})), 
+            ...AppState.db.expense.map(x => ({ID: x.id, Tanggal: x.date, Tipe: 'KREDIT', Dompet: x.wallet || 'Tunai', Keterangan: x.desc, Jumlah: x.amount, PlotID: x.plotId || ''})), 
             ...AppState.db.mutations.map(x => ({ID: x.id, Tanggal: x.date, Tipe: 'MUTASI', Dari: x.from, Ke: x.to, Keterangan: 'Transfer Mutasi', Jumlah: x.amount, PlotID: ''}))
         ].sort((a, b) => new Date(a.Tanggal) - new Date(b.Tanggal));
         
         if (!gabungan.length) return showPopup('alert', "Belum ada catatan!", '#ffffff');
         const wsTrans = XLSX.utils.json_to_sheet(gabungan), wb = XLSX.utils.book_new(); 
         XLSX.utils.book_append_sheet(wb, wsTrans, "RekapKeuangan");
-        if(AppState.db.plots.length > 0) { const plotData = AppState.db.plots.map(p => ({ID: p.id, Nama: sanitizeExcel(p.name), Target: p.target})); const wsPlot = XLSX.utils.json_to_sheet(plotData); XLSX.utils.book_append_sheet(wb, wsPlot, "Daftar_Plot"); }
+        if(AppState.db.plots.length > 0) { const plotData = AppState.db.plots.map(p => ({ID: p.id, Nama: p.name, Target: p.target})); const wsPlot = XLSX.utils.json_to_sheet(plotData); XLSX.utils.book_append_sheet(wb, wsPlot, "Daftar_Plot"); }
         XLSX.writeFile(wb, `uang_famBARLA_Backup_${Utils.tglHariIni()}.xlsx`);
     }
 
@@ -1461,12 +1509,25 @@
         document.getElementById('import-modal').classList.add('hidden'); 
         if(AppState.tempImportPlots.length > 0) { AppState.tempImportPlots.forEach(p => { if(!AppState.db.plots.some(x => x.id === p.ID)) AppState.db.plots.push({ id: p.ID, name: p.Nama, target: Number(p.Target) }); }); }
         if (mode === 'semua') {
+            // BUG FIX: Kiamat Impor - Gunakan sistem timpa (Replace) jika ID sudah ada
             AppState.tempImport.forEach(r => {
                 const tipe = String(r.Tipe).toUpperCase(), d = parseExcelDate(r.Tanggal), nom = Math.abs(Number(r.Jumlah)), id = r.ID || Utils.buatId();
                 if (isNaN(nom) || nom <= 0) return; 
-                if (tipe === 'DEBIT' && !AppState.db.income.some(i => i.id === id)) AppState.db.income.push({ id, date: d, desc: r.Keterangan || '-', amount: nom, wallet: r.Dompet || 'Tunai' });
-                if (tipe === 'KREDIT' && !AppState.db.expense.some(e => e.id === id)) AppState.db.expense.push({ id, date: d, desc: r.Keterangan || '-', amount: nom, wallet: r.Dompet || 'Tunai', plotId: r.PlotID || null });
-                if (tipe === 'MUTASI' && !AppState.db.mutations.some(m => m.id === id)) AppState.db.mutations.push({ id, date: d, from: r.Dari || 'Tunai', to: r.Ke || 'Bank', amount: nom });
+                if (tipe === 'DEBIT') {
+                    const idx = AppState.db.income.findIndex(i => i.id === id);
+                    const newData = { id, date: d, desc: r.Keterangan || '-', amount: nom, wallet: r.Dompet || 'Tunai' };
+                    if(idx >= 0) AppState.db.income[idx] = newData; else AppState.db.income.push(newData);
+                }
+                if (tipe === 'KREDIT') {
+                    const idx = AppState.db.expense.findIndex(e => e.id === id);
+                    const newData = { id, date: d, desc: r.Keterangan || '-', amount: nom, wallet: r.Dompet || 'Tunai', plotId: r.PlotID || null };
+                    if(idx >= 0) AppState.db.expense[idx] = newData; else AppState.db.expense.push(newData);
+                }
+                if (tipe === 'MUTASI') {
+                    const idx = AppState.db.mutations.findIndex(m => m.id === id);
+                    const newData = { id, date: d, from: r.Dari || 'Tunai', to: r.Ke || 'Bank', amount: nom };
+                    if(idx >= 0) AppState.db.mutations[idx] = newData; else AppState.db.mutations.push(newData);
+                }
             });
         } else {
             let kalk = { 'Tunai': 0, 'Bank': 0, 'e-Wallet': 0 };
@@ -1475,7 +1536,7 @@
             AppState.db.income = []; 
             AppState.db.expense = []; 
             AppState.db.mutations = [];
-            AppState.db.plots = []; // Bersihkan plot bawaan hantu
+            AppState.db.plots = []; // BUG FIX: Bersihkan plot hantu saat Import Ringkas
 
             Object.keys(kalk).forEach(d => { if (kalk[d] > 0) AppState.db.income.push({ id: Utils.buatId(), date: Utils.tglHariIni(), desc: `Import Excel`, amount: kalk[d], wallet: d }); else if (kalk[d] < 0) AppState.db.expense.push({ id: Utils.buatId(), date: Utils.tglHariIni(), desc: `Koreksi Excel`, amount: Math.abs(kalk[d]), wallet: d }); });
         }
@@ -1484,7 +1545,21 @@
 
     function promptClearData() {
         document.getElementById('dropdown-menu').classList.add('hidden');
-        showPopup('delete', "HAPUS SEMUA DATA?", 'var(--danger)', () => { localStorage.removeItem('myMoneyDB'); AppState.db = { income: [], expense: [], mutations: [], plots: [] }; simpanDatabase(); updateRekap(); updatePlotList(); updateWalletDropdownBalances(); showPopup('alert', "Data Kosong.", 'var(--danger)'); });
+        showPopup('delete', "HAPUS SEMUA DATA?", 'var(--danger)', () => { 
+            localStorage.removeItem('myMoneyDB'); 
+            AppState.db = { income: [], expense: [], mutations: [], plots: [] }; 
+            simpanDatabase(); 
+            updateRekap(); 
+            updatePlotList(); 
+            updateWalletDropdownBalances(); 
+            
+            // BUG FIX: Kirim pesan telepati ke SW untuk membakar memori cache lama
+            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({action: 'CLEAR_CACHE'});
+            }
+            
+            showPopup('alert', "Data Kosong.", 'var(--danger)'); 
+        });
     }
 
     // =========================================================
@@ -1508,6 +1583,9 @@
     }
     
     function openPicker(id, m, w) { 
+        document.getElementById('dropdown-menu').classList.add('hidden');
+        document.getElementById('balance-dropdown').classList.add('hidden');
+
         Picker.targetId = id; Picker.mode = m; Picker.theme = w; 
         const val = document.getElementById(id).dataset.rawDate; 
         Picker.sel = new Date(m === 'month' ? val + "-01T00:00:00" : val + "T00:00:00"); 
@@ -1536,6 +1614,7 @@
         if (Picker.mode === 'date') {
             const currentMonth = Picker.curr.getMonth();
             Picker.curr.setMonth(currentMonth + arah);
+            // BUG FIX: Mencegah loncat ke bulan depannya jika tanggal tidak valid (misal 31 Feb)
             if (Picker.curr.getMonth() !== (currentMonth + arah) % 12 && Picker.curr.getMonth() !== (currentMonth + arah + 12) % 12) {
                 Picker.curr.setDate(0);
             }
@@ -1573,7 +1652,7 @@
 
     function terapkanVersi() {
         const elVersi = document.getElementById('app-version-display');
-        if (elVersi) elVersi.innerText = `VERSI 1.0`;
+        if (elVersi) elVersi.innerText = `VERSI 1.2`;
     }
 
     window.addEventListener('DOMContentLoaded', () => { muatDatabase(); inisiasiKalenderAwal(); updatePlotList(); updateRekap(); updateWalletDropdownBalances(); jalankanJam(); terapkanVersi(); });
