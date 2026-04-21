@@ -47,6 +47,12 @@
         }
         .hidden { display: none !important; }
 
+        /* CLASS KHUSUS FONT AUDIOWIDE */
+        .font-audiowide {
+            font-family: 'Audiowide', sans-serif !important;
+            font-weight: 400 !important;
+        }
+
         /* ================= HEADER & TYPOGRAPHY ================= */
         header {
             background-color: var(--wa-header); 
@@ -115,7 +121,7 @@
 
         /* ================= TABS ================= */
         .nav-tabs {
-            display: flex; background-color: var(--wa-card); text-transform: uppercase; font-weight: 600; font-size: 12px;
+            display: flex; background-color: var(--wa-card); text-transform: uppercase; font-size: 12px;
             position: relative; z-index: 10; flex-shrink: 0; margin: 15px 15px 0 15px; border-radius: 8px; border: 1px solid var(--border-color); 
             overflow: hidden;
         }
@@ -161,7 +167,7 @@
         .custom-select-options {
             position: absolute; top: 100%; left: 0; right: 0; background-color: var(--wa-card);
             border: 1px solid var(--border-color); border-radius: 8px; margin-top: 5px; z-index: 999; 
-            overflow-y: auto; max-height: 220px; box-shadow: 0 5px 20px rgba(0,0,0,0.9);
+            overflow-y: auto; max-height: 40vh; box-shadow: 0 5px 20px rgba(0,0,0,0.9);
         }
         .custom-option { padding: 12px; border-bottom: 1px solid var(--border-color); cursor: pointer; color: var(--text-light); font-size: 14px; font-weight: 500; }
         .custom-option:hover { background-color: rgba(255, 255, 255, 0.1); }
@@ -197,8 +203,8 @@
         }
         #history-debit h4 { color: var(--text-light); border-bottom: 1px solid var(--border-color); background-color: transparent !important; }
         #history-kredit h4 { color: var(--danger); border-bottom: 1px solid var(--border-color); background-color: transparent !important; }
-        .history-col h4 { margin: 0 0 6px 0; padding: 0 0 6px 0; text-align: center; font-size: 12px; font-weight: 700; text-transform: uppercase; } 
-        .history-col ul { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; min-height: 0; padding-bottom: 8px; }
+        .history-col h4 { margin: 0 0 6px 0; padding: 0 0 6px 0; text-align: center; font-size: 12px; text-transform: uppercase; } 
+        .history-col ul { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; min-height: 0; padding-bottom: 30px; } /* Fix Padding Bawah Watermark */
         .history-col ul::-webkit-scrollbar { width: 3px; }
         .history-col ul::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
         .history-col li { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border-color); gap: 6px; }
@@ -325,16 +331,16 @@
 </header>
 
 <div class="nav-tabs" id="main-nav-tabs">
-    <div class="tab tab-debit active" onclick="showPage(event, 'pemasukan')">DEBIT</div>
-    <div class="tab tab-kredit" onclick="showPage(event, 'pengeluaran')">KREDIT</div>
-    <div class="tab tab-plot" onclick="showPage(event, 'plot')">PLOT</div>
-    <div class="tab tab-rekap" onclick="showPage(event, 'rekap')">REKAP</div>
+    <div class="tab tab-debit active font-audiowide" onclick="showPage(event, 'pemasukan')">DEBIT</div>
+    <div class="tab tab-kredit font-audiowide" onclick="showPage(event, 'pengeluaran')">KREDIT</div>
+    <div class="tab tab-plot font-audiowide" onclick="showPage(event, 'plot')">PLOT</div>
+    <div class="tab tab-rekap font-audiowide" onclick="showPage(event, 'rekap')">REKAP</div>
 </div>
 
 <div class="content">
     <div id="pemasukan" class="page">
         <div class="card">
-            <h3 style="margin:0 0 15px 0; color:var(--wa-green); font-size:16px;">+ Catat Pemasukan</h3>
+            <h3 class="font-audiowide" style="margin:0 0 15px 0; color:var(--wa-green); font-size:16px;">+ Catat Pemasukan</h3>
             <div class="form-group"><label>Tanggal</label><input type="text" id="in-date" readonly onclick="openPicker('in-date', 'date', 'var(--wa-green)')"></div>
             <div class="form-group"><label>Keterangan</label><input type="text" id="in-desc" placeholder="Gaji, Insentif, dll" autocomplete="off"></div>
             <div class="form-group">
@@ -346,13 +352,13 @@
                 <input type="hidden" id="in-wallet" value="Tunai">
             </div>
             <div class="form-group"><label>Jumlah (Rp)</label><input type="text" inputmode="numeric" id="in-amount" placeholder="0"></div>
-            <button class="btn-main btn-green" id="btn-save-in" onclick="saveData(event, 'income')">Simpan Pemasukan</button>
+            <button class="btn-main btn-green font-audiowide" id="btn-save-in" onclick="saveData(event, 'income')">Simpan Pemasukan</button>
         </div>
     </div>
 
     <div id="pengeluaran" class="page hidden">
         <div class="card">
-            <h3 style="margin:0 0 15px 0; color:var(--danger); font-size:16px;">- Catat Pengeluaran</h3>
+            <h3 class="font-audiowide" style="margin:0 0 15px 0; color:var(--danger); font-size:16px;">- Catat Pengeluaran</h3>
             <div class="form-group"><label>Tanggal</label><input type="text" id="out-date" readonly onclick="openPicker('out-date', 'date', 'var(--danger)')"></div>
             <div class="form-group">
                 <label>Ambil dari Plot</label>
@@ -372,20 +378,20 @@
                 <input type="hidden" id="out-wallet" value="Tunai">
             </div>
             <div class="form-group"><label>Jumlah (Rp)</label><input type="text" inputmode="numeric" id="out-amount" placeholder="0"></div>
-            <button class="btn-main btn-red" id="btn-save-out" onclick="saveData(event, 'expense')">Simpan Pengeluaran</button>
+            <button class="btn-main btn-red font-audiowide" id="btn-save-out" onclick="saveData(event, 'expense')">Simpan Pengeluaran</button>
         </div>
     </div>
 
     <div id="plot" class="page hidden">
         <div class="card">
-            <h3 style="margin:0 0 15px 0; color:var(--text-light); font-size:16px;">Alokasi Anggaran</h3>
+            <h3 class="font-audiowide" style="margin:0 0 15px 0; color:var(--text-light); font-size:16px;">Alokasi Anggaran</h3>
             <div class="form-group"><label>Nama Anggaran</label><input type="text" id="plot-name" placeholder="Uang Makan, Uang Bensin, dll" autocomplete="off"></div>
             <div class="form-group"><label>Target Per Bulan (Rp)</label><input type="text" inputmode="numeric" id="plot-amount" placeholder="0"></div>
-            <button class="btn-main btn-white" onclick="savePlot()">Tambah Plot</button>
+            <button class="btn-main btn-white font-audiowide" onclick="savePlot()">Tambah Plot</button>
         </div>
         <div class="card card-flex">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-shrink:0;">
-                <h4 style="margin:0; font-size:13px; color:#fff;">Riwayat Plot:</h4>
+                <h4 class="font-audiowide" style="margin:0; font-size:13px; color:#fff;">Riwayat Plot:</h4>
                 <input type="text" id="plot-month-filter" readonly onclick="openPicker('plot-month-filter', 'month', '#ffffff')" style="width:110px; padding:6px; font-size:11px; text-align:center;">
             </div>
             <div id="plot-list"></div>
@@ -400,11 +406,6 @@
         </div>
 
         <div id="rekap-focus-hide">
-            <div class="card" style="padding:10px; margin-bottom: 8px; border-color:var(--border-color);">
-                <label style="font-size:11px; margin-bottom: 4px;">PILIH TANGGAL RIWAYAT:</label>
-                <input type="text" id="rekap-date-picker" readonly onclick="openPicker('rekap-date-picker', 'date', '#ffffff')" style="padding:10px;">
-            </div>
-            
             <div class="balance-box">
                 <small style="font-size: 9px; letter-spacing: 1px; color:#888;">SISA SALDO GLOBAL</small>
                 <h2 id="total-balance">Rp 0</h2>
@@ -425,12 +426,20 @@
                 <div class="wallet-card"><small>BANK</small><span id="bal-bank">0</span></div>
                 <div class="wallet-card"><small>E-WALLET</small><span id="bal-ewallet">0</span></div>
             </div>
-            <button class="btn-main btn-white" onclick="openMutationModal()" style="margin-top: 0; margin-bottom:10px; border-radius: 12px; padding: 12px;">⇄ Mutasi Saldo (Transfer)</button>
+            
+            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                <div class="card" style="padding: 10px; margin-bottom: 0; border-color: var(--border-color); flex: 1; display: flex; flex-direction: column; box-sizing: border-box;">
+                    <label style="font-size:10px; margin-bottom: 4px; font-family: 'Montserrat', sans-serif;">PILIH BULAN RIWAYAT:</label>
+                    <input type="text" id="rekap-date-picker" readonly onclick="openPicker('rekap-date-picker', 'month', '#ffffff')" style="padding:10px; text-align: center;">
+                </div>
+                <button class="btn-main btn-white font-audiowide" onclick="openMutationModal()" style="margin-top: 0; margin-bottom: 0; border-radius: 12px; flex: 1; padding: 10px; font-size: 11px; box-sizing: border-box;">⇄ Mutasi Saldo</button>
+            </div>
+
         </div>
 
         <div class="history-columns">
-            <div class="history-col" id="history-debit"><h4>DEBIT</h4><ul id="list-income"></ul></div>
-            <div class="history-col" id="history-kredit"><h4>KREDIT / MUTASI</h4><ul id="list-expense"></ul></div>
+            <div class="history-col" id="history-debit"><h4 class="font-audiowide">DEBIT</h4><ul id="list-income"></ul></div>
+            <div class="history-col" id="history-kredit"><h4 class="font-audiowide">KREDIT / MUTASI</h4><ul id="list-expense"></ul></div>
         </div>
     </div>
 </div>
@@ -448,13 +457,13 @@
 
 <div id="mutation-modal" class="modal-overlay hidden">
     <div class="modal-box" style="padding: 20px;">
-        <h3 style="margin-top:0; margin-bottom: 15px; color:#ffffff; font-size:16px;">⇄ Mutasi Saldo</h3>
+        <h3 class="font-audiowide" style="margin-top:0; margin-bottom: 15px; color:#ffffff; font-size:16px;">⇄ Mutasi Saldo</h3>
         <div class="form-group" style="text-align:left;"><label>Dari Dompet</label><div class="custom-select-container"><div class="custom-select-trigger" id="mut-from-trigger" onclick="toggleCustomSelect('mut-from-opts', event)">Tunai</div><div class="custom-select-options hidden" id="mut-from-opts"></div></div><input type="hidden" id="mut-from" value="Tunai"></div>
         <div class="form-group" style="text-align:left;"><label>Ke Dompet</label><div class="custom-select-container"><div class="custom-select-trigger" id="mut-to-trigger" onclick="toggleCustomSelect('mut-to-opts', event)">Bank</div><div class="custom-select-options hidden" id="mut-to-opts"></div></div><input type="hidden" id="mut-to" value="Bank"></div>
         <div class="form-group" style="text-align:left; margin-bottom: 15px;"><label>Jumlah (Rp)</label><input type="text" inputmode="numeric" id="mut-amount" placeholder="0"></div>
         <div class="modal-actions">
             <button class="modal-btn btn-white cancel" onclick="closeMutationModal()">BATAL</button>
-            <button class="modal-btn btn-white ok" onclick="processMutation()" style="opacity: 0.4;">TRANSFER</button>
+            <button class="modal-btn btn-white ok font-audiowide" onclick="processMutation()" style="opacity: 0.4;">TRANSFER</button>
         </div>
     </div>
 </div>
@@ -491,7 +500,7 @@
                     <span class="letter" style="animation-delay: 1.4s">B</span><span class="letter" style="animation-delay: 1.6s">A</span><span class="letter" style="animation-delay: 1.8s">R</span><span class="letter" style="animation-delay: 2.0s">L</span><span class="letter" style="animation-delay: 2.2s">A</span>
                 </span>
             </h2>
-            <small id="app-version-display" style="color: var(--text-muted); font-family: 'Montserrat', sans-serif; font-weight: 700; letter-spacing: 1px; font-size: 10px;">VERSI 3.4</small>
+            <small id="app-version-display" style="color: var(--text-muted); font-family: 'Montserrat', sans-serif; font-weight: 700; letter-spacing: 1px; font-size: 10px;">VERSI 1.0</small>
         </div>
         <div style="font-size: 13px; line-height: 1.6; color: #ffffff; font-family: 'Montserrat', sans-serif;">
             <div style="background: var(--wa-header); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
@@ -577,7 +586,7 @@
     // =========================================================
     // 1. PENGATURAN AWAL & DATABASE 
     // =========================================================
-    const APP_VERSION = "3.4"; 
+    const APP_VERSION = "1.0"; 
     const CLOUD_URL = "https://script.google.com/macros/s/AKfycbwb0SJIbBzZvZ74s1z1OGsHZuwB_sq3b7R91BnuGdawxpP69bTDVyC1IeozUQYezTgQ/exec";
 
     if ('serviceWorker' in navigator) {
@@ -588,7 +597,7 @@
         db: { income: [], expense: [], mutations: [], plots: [] },
         charts: { arusKas: null, portofolio: null },
         tempImport: [], tempImportPlots: [],
-        grafikSaatIni: { in: 0, out: 0, tunai: 0, bank: 0, ewal: 0 }
+        grafikSaatIni: { in: 0, out: 0, tunai: 0, bank: 0, ewal: 0, visibleExpenses: [] }
     };
 
     function muatDatabase() {
@@ -607,13 +616,17 @@
     }
 
     function simpanDatabase() {
-        const dataString = JSON.stringify(AppState.db);
-        localStorage.setItem('myMoneyDB', dataString);
-        const persen = ((dataString.length * 2) / (5 * 1024 * 1024) * 100).toFixed(1);
-        const elemenPersen = document.getElementById('storage-pct');
-        if (elemenPersen) {
-            elemenPersen.innerText = (persen > 100 ? 100 : persen) + '%';
-            elemenPersen.style.color = persen > 90 ? 'var(--danger)' : '#ffffff';
+        try {
+            const dataString = JSON.stringify(AppState.db);
+            localStorage.setItem('myMoneyDB', dataString);
+            const persen = ((dataString.length * 2) / (5 * 1024 * 1024) * 100).toFixed(1);
+            const elemenPersen = document.getElementById('storage-pct');
+            if (elemenPersen) {
+                elemenPersen.innerText = (persen > 100 ? 100 : persen) + '%';
+                elemenPersen.style.color = persen > 90 ? 'var(--danger)' : '#ffffff';
+            }
+        } catch (e) {
+            showPopup('alert', "Memori HP penuh! Gagal menyimpan data.", 'var(--danger)');
         }
     }
 
@@ -631,9 +644,13 @@
     // =========================================================
     // 2. ALAT BANTU (UTILITIES)
     // =========================================================
+    let globalIdCounter = 0;
     const Utils = {
-        buatId: () => Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
-        formatRp: (angka) => "Rp " + (angka || 0).toLocaleString('id-ID'),
+        buatId: () => Date.now().toString(36) + Math.random().toString(36).substr(2, 5) + (globalIdCounter++),
+        formatRp: (angka) => {
+            const isNeg = angka < 0;
+            return (isNeg ? "-" : "") + "Rp " + Math.abs(angka || 0).toLocaleString('id-ID');
+        },
         amanHTML: (teks) => teks ? String(teks).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])) : "-",
         tglHariIni: () => {
             const d = new Date();
@@ -671,25 +688,19 @@
         if (el) el.addEventListener('input', Utils.formatRibuanInput);
     });
 
-    // Fitur Auto-Capitalize Huruf Awal (Title Case)
+    // Pindahkan ke event blur agar kursor tidak melompat saat mengetik di tengah kalimat
     function autoCapitalizeTitleCase(e) {
         const input = e.target;
-        const originalStart = input.selectionStart;
-        const originalEnd = input.selectionEnd;
         const val = input.value;
-        const newVal = val.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
-        if (val !== newVal) {
-            input.value = newVal;
-            input.setSelectionRange(originalStart, originalEnd);
-        }
+        input.value = val.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
     }
     ['in-desc', 'out-desc', 'edit-desc', 'plot-name'].forEach(id => {
         const el = document.getElementById(id);
-        if(el) el.addEventListener('input', autoCapitalizeTitleCase);
+        if(el) el.addEventListener('blur', autoCapitalizeTitleCase);
     });
 
     // =========================================================
-    // 3. LOGIKA POPUP NOTIFIKASI GHOST UI (Telah Diperbarui)
+    // 3. LOGIKA POPUP NOTIFIKASI GHOST UI
     // =========================================================
     function showPopup(mode, pesan, warnaTema = '#ffffff', callback = null, nilaiAwal = null, isAngka = false) {
         const overlay = document.getElementById('custom-modal'), 
@@ -704,7 +715,6 @@
         teks.innerText = pesan; 
         overlay.classList.remove('hidden');
         
-        // Batal: TERANG. Ok/Aksi: REDUP (opacity: 0.4)
         btnOk.className = "modal-btn ok";
         btnBatal.className = "modal-btn cancel";
         
@@ -714,12 +724,10 @@
         judul.style.color = warnaTema;
         modalBox.style.borderColor = warnaTema;
 
-        // Warna putaran spinner dinamis
         if(loader) {
             loader.style.borderTopColor = warnaTema;
         }
         
-        // Sembunyikan semua elemen opsional
         input.classList.add('hidden');
         btnBatal.classList.add('hidden');
         btnOk.classList.add('hidden'); 
@@ -730,7 +738,6 @@
 
         if (mode === 'loading') {
             if(loader) loader.classList.remove('hidden');
-            // Tombol OK tetap dibiarkan tersembunyi
         } else if (mode === 'delete' || mode === 'reverse') {
             btnBatal.classList.remove('hidden'); 
             btnOk.classList.remove('hidden');
@@ -772,7 +779,7 @@
         
         showPopup('loading', "Mengunggah data ke Cloud...\nMohon tunggu sebentar.", 'var(--cloud)');
         
-        const activeMonth = document.getElementById('rekap-date-picker').dataset.rawDate.substring(0, 7);
+        const activeMonth = Utils.tglHariIni().substring(0, 7);
         const payload = {
             activeMonth: activeMonth,
             income: AppState.db.income,
@@ -843,7 +850,14 @@
                 AppState.db.income.push(...data.income);
                 AppState.db.expense.push(...data.expense);
                 AppState.db.mutations.push(...data.mutations);
-                AppState.db.plots = data.plots || [];
+                
+                if (data.plots) {
+                    data.plots.forEach(cloudPlot => {
+                        if (!AppState.db.plots.some(localPlot => localPlot.id === cloudPlot.id)) {
+                            AppState.db.plots.push(cloudPlot);
+                        }
+                    });
+                }
 
                 simpanDatabase();
                 updateRekap();
@@ -871,6 +885,13 @@
         document.getElementById('out-date').dataset.rawDate = hrIni;
         document.getElementById('out-date').value = formatHrIni;
 
+        // Reset filter riwayat ke bulan saat ini
+        const blnIni = hrIni.substring(0, 7); 
+        ['plot-month-filter', 'rekap-date-picker'].forEach(id => {
+            const el = document.getElementById(id); 
+            if (el) { el.dataset.rawDate = blnIni; el.value = `${BlnPdk[parseInt(blnIni.split('-')[1], 10)-1]} ${blnIni.split('-')[0]}`; }
+        });
+
         document.getElementById('in-desc').value = '';
         document.getElementById('in-amount').value = '';
         document.getElementById('out-desc').value = '';
@@ -888,7 +909,10 @@
         document.querySelector('.tab-debit').classList.add('active');
         document.getElementById('main-nav-tabs').style.borderColor = 'var(--border-color)'; 
 
-        showPopup('alert', "✨ Formulir berhasil di-reset ke Hari Ini!", 'var(--wa-green)');
+        updateRekap();
+        updatePlotList();
+
+        showPopup('alert', "✨ Aplikasi berhasil di-reset!", 'var(--wa-green)');
     }
 
     function updateWalletDropdownBalances() {
@@ -986,11 +1010,24 @@
     function toggleCustomSelect(optId, e) {
         e.stopPropagation();
         document.querySelectorAll('.custom-select-options').forEach(el => { if (el.id !== optId) el.classList.add('hidden'); });
+        document.getElementById('dropdown-menu').classList.add('hidden');
+        document.getElementById('balance-dropdown').classList.add('hidden');
         document.getElementById(optId).classList.toggle('hidden');
     }
 
-    function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdown-menu').classList.toggle('hidden'); }
-    function toggleBalanceMenu(e) { e.stopPropagation(); document.getElementById('balance-dropdown').classList.toggle('hidden'); }
+    function toggleMenu(e) { 
+        e.stopPropagation(); 
+        document.querySelectorAll('.custom-select-options').forEach(el => el.classList.add('hidden'));
+        document.getElementById('balance-dropdown').classList.add('hidden');
+        document.getElementById('dropdown-menu').classList.toggle('hidden'); 
+    }
+    
+    function toggleBalanceMenu(e) { 
+        e.stopPropagation(); 
+        document.querySelectorAll('.custom-select-options').forEach(el => el.classList.add('hidden'));
+        document.getElementById('dropdown-menu').classList.add('hidden');
+        document.getElementById('balance-dropdown').classList.toggle('hidden'); 
+    }
 
     document.addEventListener('click', e => {
         const menu = document.getElementById('dropdown-menu');
@@ -1029,7 +1066,7 @@
         const pfx = tipe === 'income' ? 'in' : 'out';
         const tgl = document.getElementById(`${pfx}-date`).dataset.rawDate;
         const ket = document.getElementById(`${pfx}-desc`).value.trim();
-        const nom = Math.abs(Number(document.getElementById(`${pfx}-amount`).value.replace(/\./g, '')));
+        const nom = Math.abs(Number(document.getElementById(`${pfx}-amount`).value.replace(/[^0-9]/g, '')));
         const dmp = document.getElementById(`${pfx}-wallet`).value;
         const plt = tipe === 'expense' ? document.getElementById('out-plot').value : null;
         
@@ -1103,36 +1140,45 @@
         document.getElementById('edit-modal').classList.remove('hidden');
         
         btnSave.onclick = () => {
-            const nomBaru = Math.abs(Number(document.getElementById('edit-amount').value.replace(/\./g, '')));
+            const nomBaru = Math.abs(Number(document.getElementById('edit-amount').value.replace(/[^0-9]/g, '')));
             if (isNaN(nomBaru) || nomBaru <= 0) return showPopup('alert', "Jumlah tidak valid!", titleColor);
             const dompetBaru = document.getElementById('edit-wallet').value;
             const tglBaru = document.getElementById('edit-date').dataset.rawDate;
             const descBaru = document.getElementById('edit-desc').value.trim();
             const plotBaru = tipe === 'expense' ? document.getElementById('edit-plot-val').value : null;
-            const nominalLama = data.amount, dompetLama = data.wallet, plotLama = data.plotId, tglLama = data.date, descLamaAsli = data.desc;
-            data.amount = nomBaru; data.wallet = dompetBaru; data.date = tglBaru; data.desc = descBaru;
-            if (tipe === 'expense') data.plotId = plotBaru;
             
-            if (getSaldoDompet('Tunai') < 0 || getSaldoDompet('Bank') < 0 || getSaldoDompet('e-Wallet') < 0) {
-                data.amount = nominalLama; data.wallet = dompetLama; data.date = tglLama; data.desc = descLamaAsli;
-                if (tipe === 'expense') data.plotId = plotLama;
-                return showPopup('alert', "Batal: Saldo akan minus!", titleColor);
+            const nominalLama = data.amount, dompetLama = data.wallet;
+            
+            let saldoAman = true;
+            if (tipe === 'expense') {
+                let saldoTersedia = getSaldoDompet(dompetBaru);
+                if (dompetBaru === dompetLama) saldoTersedia += nominalLama;
+                if (saldoTersedia < nomBaru) saldoAman = false;
+            } else if (tipe === 'income') {
+                let saldoSisaLama = getSaldoDompet(dompetLama) - nominalLama;
+                if (dompetBaru !== dompetLama) {
+                    if (saldoSisaLama < 0) saldoAman = false;
+                } else {
+                    if (saldoSisaLama + nomBaru < 0) saldoAman = false;
+                }
             }
+
+            if (!saldoAman) return showPopup('alert', "Batal: Saldo akan minus!", titleColor);
+
             if (tipe === 'expense' && plotBaru) {
                 const plotObj = AppState.db.plots.find(p => p.id === plotBaru);
                 if (plotObj && plotObj.target > 0) {
                     const filterBulan = tglBaru.substring(0, 7);
-                    let totalPakai = AppState.db.expense.filter(e => e.date.startsWith(filterBulan) && e.plotId === plotBaru && e.id !== idItem).reduce((sum, e) => sum + e.amount, 0);
-                    if ((totalPakai + nomBaru) > plotObj.target) {
-                        data.amount = nominalLama; data.wallet = dompetLama; data.date = tglLama; data.desc = descLamaAsli; data.plotId = plotLama;
+                    let totalPakaiLain = AppState.db.expense.filter(e => e.date.startsWith(filterBulan) && e.plotId === plotBaru && e.id !== idItem).reduce((sum, e) => sum + e.amount, 0);
+                    if ((totalPakaiLain + nomBaru) > plotObj.target) {
                         return showPopup('confirm', `Peringatan! Melebihi target Plot [${Utils.amanHTML(plotObj.name)}]. Lanjutkan?`, titleColor, () => {
                             prosesSimpanEditAkhir(data, nomBaru, dompetBaru, tglBaru, descBaru, plotBaru, tipe);
                         });
                     }
                 }
             }
-            simpanDatabase(); document.getElementById('edit-modal').classList.add('hidden');
-            updateRekap(); updatePlotList(); updateWalletDropdownBalances();
+            
+            prosesSimpanEditAkhir(data, nomBaru, dompetBaru, tglBaru, descBaru, plotBaru, tipe);
         };
     }
 
@@ -1152,18 +1198,20 @@
 
     function processMutation() {
         const asal = document.getElementById('mut-from').value, tujuan = document.getElementById('mut-to').value;
-        const nominal = Number(document.getElementById('mut-amount').value.replace(/\./g, ''));
+        const nominal = Math.abs(Number(document.getElementById('mut-amount').value.replace(/[^0-9]/g, '')));
         if (asal === tujuan) return showPopup('alert', 'Dompet asal & tujuan sama!', '#ffffff');
         if (isNaN(nominal) || nominal <= 0) return showPopup('alert', 'Jumlah tidak valid!', '#ffffff');
         if (getSaldoDompet(asal) < nominal) return showPopup('alert', `Saldo [${asal}] tidak cukup!`, '#ffffff');
-        const tglMutasi = document.getElementById('rekap-date-picker').dataset.rawDate || Utils.tglHariIni();
+        
+        const tglMutasi = Utils.tglHariIni(); 
+        
         AppState.db.mutations.push({ id: Utils.buatId(), date: tglMutasi, from: asal, to: tujuan, amount: nominal });
         simpanDatabase(); closeMutationModal(); updateRekap(); updateWalletDropdownBalances();
         showPopup('alert', 'Mutasi Berhasil!', '#ffffff');
     }
 
     function savePlot() {
-        const nama = document.getElementById('plot-name').value.trim(), target = Math.abs(Number(document.getElementById('plot-amount').value.replace(/\./g, '')));
+        const nama = document.getElementById('plot-name').value.trim(), target = Math.abs(Number(document.getElementById('plot-amount').value.replace(/[^0-9]/g, '')));
         if (!nama || isNaN(target) || target <= 0) return showPopup('alert', "Isi Nama & Target dengan benar!", '#ffffff');
         AppState.db.plots.push({ id: Utils.buatId(), name: nama, target: target });
         simpanDatabase(); document.getElementById('plot-name').value = ''; document.getElementById('plot-amount').value = '';
@@ -1175,7 +1223,7 @@
         showPopup('edit', `Ubah ${isAngka ? 'Target' : 'Nama'} Plot:`, '#ffffff', val => {
             if (!val) return;
             if (isAngka) {
-                const newTarget = Math.abs(Number(val.replace(/\./g, '')));
+                const newTarget = Math.abs(Number(val.replace(/[^0-9]/g, '')));
                 if (isNaN(newTarget) || newTarget <= 0) return showPopup('alert', 'Target tidak valid!', '#ffffff');
                 plot[jenis] = newTarget;
             } else { plot[jenis] = val.trim(); }
@@ -1218,18 +1266,22 @@
         wadah.innerHTML = htmlList;
     }
 
-    function clearSearch() { document.getElementById('rekap-search').value = ''; updateRekap(); }
+    function clearSearch() { 
+        document.getElementById('rekap-search').value = ''; 
+        updateRekap(); 
+    }
 
     function updateRekap() {
         const tglSortir = document.getElementById('rekap-date-picker').dataset.rawDate, 
               kunciRaw = document.getElementById('rekap-search').value.toLowerCase().trim(), 
-              kunciBersih = kunciRaw.replace(/\./g, '');
+              kunciBersih = kunciRaw.replace(/[^0-9]/g, '');
         const elMasuk = document.getElementById('list-income'), 
               elKeluar = document.getElementById('list-expense');
               
         if (kunciRaw) { 
             document.getElementById('rekap-focus-hide').classList.add('hidden'); 
             document.getElementById('clear-search-btn').classList.remove('hidden'); 
+            elMasuk.scrollTop = 0; elKeluar.scrollTop = 0;
         } else { 
             document.getElementById('rekap-focus-hide').classList.remove('hidden'); 
             document.getElementById('clear-search-btn').classList.add('hidden'); 
@@ -1248,7 +1300,7 @@
                     item.date.includes(kunciRaw)
                 );
             }
-            return item.date === tglSortir;
+            return item.date.startsWith(tglSortir);
         });
 
         gabungan.sort((a, b) => {
@@ -1260,16 +1312,17 @@
         gabungan.reverse();
         
         let htmlMasuk = '', htmlKeluar = ''; 
+        let visibleExp = [];
         
         gabungan.forEach(item => {
             const isIn = item.type === 'income', isMut = item.type === 'mutations';
             const barisHTML = `<li><div class="editable" onclick="editData('${item.type}','${item.id}')"><div style="font-size:12px; font-weight:600; word-wrap: break-word; line-height:1.3; margin-bottom: 3px;">
-                ${kunciRaw ? `<small style="color:var(--text-muted)">${Utils.formatTglTampil(item.date)}</small><br>` : ''}${Utils.amanHTML(item.desc)}</div>
+                <small style="color:var(--text-muted)">${Utils.formatTglTampil(item.date)}</small><br>${Utils.amanHTML(item.desc)}</div>
                 <div style="font-size:11px; font-weight:700;" class="${isMut ? 'mutasi-text' : (isIn ? 'income-text' : 'expense-text')}">
                 ${isMut ? '⇄' : (isIn ? '+' : '-')} ${Utils.formatRp(item.amount)} <br><small style="color:var(--text-muted); font-weight:500; font-size: 9px;">(${item.walletInfo})</small></div></div>
                 <div onclick="deleteItem(event, '${item.type}','${item.id}')" style="padding-left: 6px;"><svg class="svg-x" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div></li>`;
             
-            if (isIn) { htmlMasuk += barisHTML; } else { htmlKeluar += barisHTML; } 
+            if (isIn) { htmlMasuk += barisHTML; } else { htmlKeluar += barisHTML; if (item.type === 'expense') visibleExp.push(item); } 
         });
         
         elMasuk.innerHTML = htmlMasuk || '<li style="justify-content:center; color:var(--text-muted); font-size:11px; border: none; padding-top: 20px;">- Kosong -</li>';
@@ -1290,11 +1343,12 @@
         
         AppState.grafikSaatIni = { 
             in: globalIn, out: globalOut, tunai: sTunai, bank: sBank, ewal: sEwal,
-            filterDate: kunciRaw ? null : tglSortir
+            filterDate: kunciRaw ? null : tglSortir,
+            visibleExpenses: visibleExp
         };
     }
 
-    function openChartModal() { document.getElementById('balance-dropdown').classList.add('hidden'); document.getElementById('chart-modal').classList.remove('hidden'); setTimeout(renderGrafik, 50); }
+    function openChartModal() { document.getElementById('balance-dropdown').classList.add('hidden'); document.getElementById('chart-modal').classList.remove('hidden'); requestAnimationFrame(() => renderGrafik()); }
     function closeChartModal() { document.getElementById('chart-modal').classList.add('hidden'); }
 
     function getDynamicColor(index) {
@@ -1314,20 +1368,18 @@
         let pengeluaranMap = {}; 
         let totalKeluar = 0;
         
-        const filterBulan = d.filterDate ? d.filterDate.substring(0, 7) : Utils.tglHariIni().substring(0, 7);
+        const expensesToChart = d.filterDate === null ? d.visibleExpenses : AppState.db.expense.filter(e => e.date.startsWith(d.filterDate));
 
-        AppState.db.expense.forEach(e => {
-            if (e.date.startsWith(filterBulan)) {
-                let pName = e.desc; 
-                if (e.plotId) { 
-                    const plotObj = AppState.db.plots.find(p => p.id === e.plotId); 
-                    if (plotObj) pName = plotObj.name; 
-                }
-                
-                if (!pengeluaranMap[pName]) pengeluaranMap[pName] = 0;
-                pengeluaranMap[pName] += e.amount; 
-                totalKeluar += e.amount;
+        expensesToChart.forEach(e => {
+            let pName = e.desc; 
+            if (e.plotId) { 
+                const plotObj = AppState.db.plots.find(p => p.id === e.plotId); 
+                if (plotObj) pName = plotObj.name; 
             }
+            
+            if (!pengeluaranMap[pName]) pengeluaranMap[pName] = 0;
+            pengeluaranMap[pName] += e.amount; 
+            totalKeluar += e.amount;
         });
         
         let labelsRinci = [], dataRinci = [], colorRinci = [];
@@ -1365,13 +1417,23 @@
     // =========================================================
     // 8. EXCEL IMPORT / EXPORT 
     // =========================================================
+    function sanitizeExcel(str) {
+        if (typeof str === 'string' && /^[=+\-@]/.test(str)) return "'" + str;
+        return str;
+    }
+
     function exportToExcel() {
         document.getElementById('dropdown-menu').classList.add('hidden');
-        const gabungan = [...AppState.db.income.map(x => ({ID: x.id, Tanggal: x.date, Tipe: 'DEBIT', Dompet: x.wallet || 'Tunai', Keterangan: x.desc, Jumlah: x.amount, PlotID: ''})), ...AppState.db.expense.map(x => ({ID: x.id, Tanggal: x.date, Tipe: 'KREDIT', Dompet: x.wallet || 'Tunai', Keterangan: x.desc, Jumlah: x.amount, PlotID: x.plotId || ''})), ...AppState.db.mutations.map(x => ({ID: x.id, Tanggal: x.date, Tipe: 'MUTASI', Dari: x.from, Ke: x.to, Keterangan: 'Transfer Mutasi', Jumlah: x.amount, PlotID: ''}))].sort((a, b) => new Date(a.Tanggal) - new Date(b.Tanggal));
+        const gabungan = [
+            ...AppState.db.income.map(x => ({ID: x.id, Tanggal: x.date, Tipe: 'DEBIT', Dompet: x.wallet || 'Tunai', Keterangan: sanitizeExcel(x.desc), Jumlah: x.amount, PlotID: ''})), 
+            ...AppState.db.expense.map(x => ({ID: x.id, Tanggal: x.date, Tipe: 'KREDIT', Dompet: x.wallet || 'Tunai', Keterangan: sanitizeExcel(x.desc), Jumlah: x.amount, PlotID: x.plotId || ''})), 
+            ...AppState.db.mutations.map(x => ({ID: x.id, Tanggal: x.date, Tipe: 'MUTASI', Dari: x.from, Ke: x.to, Keterangan: 'Transfer Mutasi', Jumlah: x.amount, PlotID: ''}))
+        ].sort((a, b) => new Date(a.Tanggal) - new Date(b.Tanggal));
+        
         if (!gabungan.length) return showPopup('alert', "Belum ada catatan!", '#ffffff');
         const wsTrans = XLSX.utils.json_to_sheet(gabungan), wb = XLSX.utils.book_new(); 
         XLSX.utils.book_append_sheet(wb, wsTrans, "RekapKeuangan");
-        if(AppState.db.plots.length > 0) { const plotData = AppState.db.plots.map(p => ({ID: p.id, Nama: p.name, Target: p.target})); const wsPlot = XLSX.utils.json_to_sheet(plotData); XLSX.utils.book_append_sheet(wb, wsPlot, "Daftar_Plot"); }
+        if(AppState.db.plots.length > 0) { const plotData = AppState.db.plots.map(p => ({ID: p.id, Nama: sanitizeExcel(p.name), Target: p.target})); const wsPlot = XLSX.utils.json_to_sheet(plotData); XLSX.utils.book_append_sheet(wb, wsPlot, "Daftar_Plot"); }
         XLSX.writeFile(wb, `uang_famBARLA_Backup_${Utils.tglHariIni()}.xlsx`);
     }
 
@@ -1410,10 +1472,10 @@
             let kalk = { 'Tunai': 0, 'Bank': 0, 'e-Wallet': 0 };
             AppState.tempImport.forEach(r => { if (!isNaN(Number(r.Jumlah))) { if (String(r.Tipe).toUpperCase() === 'DEBIT') kalk[r.Dompet || 'Tunai'] += Number(r.Jumlah); if (String(r.Tipe).toUpperCase() === 'KREDIT') kalk[r.Dompet || 'Tunai'] -= Number(r.Jumlah); } });
             
-            // PERBAIKAN: Kosongkan memori HP terlebih dahulu agar data tidak ganda
             AppState.db.income = []; 
             AppState.db.expense = []; 
             AppState.db.mutations = [];
+            AppState.db.plots = []; // Bersihkan plot bawaan hantu
 
             Object.keys(kalk).forEach(d => { if (kalk[d] > 0) AppState.db.income.push({ id: Utils.buatId(), date: Utils.tglHariIni(), desc: `Import Excel`, amount: kalk[d], wallet: d }); else if (kalk[d] < 0) AppState.db.expense.push({ id: Utils.buatId(), date: Utils.tglHariIni(), desc: `Koreksi Excel`, amount: Math.abs(kalk[d]), wallet: d }); });
         }
@@ -1430,7 +1492,20 @@
     // =========================================================
     const Picker = { mode: 'date', curr: new Date(), sel: new Date(), targetId: '', theme: '' };
     const NamaBln = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'], BlnPdk = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
-    function inisiasiKalenderAwal() { const hrIni = Utils.tglHariIni(); ['in-date', 'out-date', 'rekap-date-picker'].forEach(id => { const el = document.getElementById(id); if (el) { el.dataset.rawDate = hrIni; el.value = Utils.formatTglTampil(hrIni); } }); const blnIni = hrIni.substring(0, 7), elPlot = document.getElementById('plot-month-filter'); if (elPlot) { elPlot.dataset.rawDate = blnIni; elPlot.value = `${BlnPdk[parseInt(blnIni.split('-')[1], 10)-1]} ${blnIni.split('-')[0]}`; } }
+    
+    function inisiasiKalenderAwal() { 
+        const hrIni = Utils.tglHariIni(); 
+        ['in-date', 'out-date'].forEach(id => { 
+            const el = document.getElementById(id); 
+            if (el) { el.dataset.rawDate = hrIni; el.value = Utils.formatTglTampil(hrIni); } 
+        }); 
+        
+        const blnIni = hrIni.substring(0, 7); 
+        ['plot-month-filter', 'rekap-date-picker'].forEach(id => {
+            const el = document.getElementById(id); 
+            if (el) { el.dataset.rawDate = blnIni; el.value = `${BlnPdk[parseInt(blnIni.split('-')[1], 10)-1]} ${blnIni.split('-')[0]}`; }
+        });
+    }
     
     function openPicker(id, m, w) { 
         Picker.targetId = id; Picker.mode = m; Picker.theme = w; 
@@ -1457,7 +1532,18 @@
     }
     
     function closePicker() { document.getElementById('custom-picker').classList.add('hidden'); }
-    function cpChange(arah) { Picker.mode === 'date' ? Picker.curr.setMonth(Picker.curr.getMonth() + arah) : Picker.curr.setFullYear(Picker.curr.getFullYear() + arah); renderKalender(); }
+    function cpChange(arah) { 
+        if (Picker.mode === 'date') {
+            const currentMonth = Picker.curr.getMonth();
+            Picker.curr.setMonth(currentMonth + arah);
+            if (Picker.curr.getMonth() !== (currentMonth + arah) % 12 && Picker.curr.getMonth() !== (currentMonth + arah + 12) % 12) {
+                Picker.curr.setDate(0);
+            }
+        } else { 
+            Picker.curr.setFullYear(Picker.curr.getFullYear() + arah); 
+        }
+        renderKalender(); 
+    }
     function cpSelectDay(t) { Picker.sel = new Date(Picker.curr.getFullYear(), Picker.curr.getMonth(), t); renderKalender(); }
     function cpSelectMonth(b) { Picker.sel = new Date(Picker.curr.getFullYear(), b, 1); renderKalender(); }
     function cpSetToday() { const d = new Date(); Picker.sel = new Date(d.getFullYear(), d.getMonth(), Picker.mode === 'date' ? d.getDate() : 1); Picker.curr = new Date(Picker.sel); setPickerDate(); }
@@ -1487,7 +1573,7 @@
 
     function terapkanVersi() {
         const elVersi = document.getElementById('app-version-display');
-        if (elVersi) elVersi.innerText = `VERSI 3.4`;
+        if (elVersi) elVersi.innerText = `VERSI 1.0`;
     }
 
     window.addEventListener('DOMContentLoaded', () => { muatDatabase(); inisiasiKalenderAwal(); updatePlotList(); updateRekap(); updateWalletDropdownBalances(); jalankanJam(); terapkanVersi(); });
