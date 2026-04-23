@@ -393,11 +393,13 @@
             <div class="balance-box">
                 <small class="audiowide-regular" style="font-size: 9px; letter-spacing: 1px; color:#888;">SISA SALDO GLOBAL</small>
                 <h2 id="total-balance">Rp 0</h2>
-                <div style="display: flex; justify-content: space-around; border-top: 1px solid var(--border-color); padding-top: 10px; margin-top: 6px;">
-                    <div style="text-align:center;"><small style="color:var(--wa-green); font-weight:700; font-size: 8px; display:block; margin-bottom: 1px;">PEMASUKAN</small><span class="income-text" id="total-in" style="font-size: 11px;">Rp 0</span></div>
-                    <div style="text-align:center;"><small style="color:var(--danger); font-weight:700; font-size: 8px; display:block; margin-bottom: 1px;">PENGELUARAN</small><span class="expense-text" id="total-out" style="font-size: 11px;">Rp 0</span></div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 10px; margin-top: 6px;">
+                    <div style="text-align:left; flex: 1;"><small style="color:var(--wa-green); font-weight:700; font-size: 8px; display:block; margin-bottom: 1px;">PEMASUKAN</small><span class="income-text" id="total-in" style="font-size: 11px;">Rp 0</span></div>
+                    <div id="health-badge" style="font-size: 9px; font-weight: 700; padding: 4px 8px; border-radius: 12px; text-align: center; white-space: nowrap; margin: 0 4px;"></div>
+                    <div style="text-align:right; flex: 1;"><small style="color:var(--danger); font-weight:700; font-size: 8px; display:block; margin-bottom: 1px;">PENGELUARAN</small><span class="expense-text" id="total-out" style="font-size: 11px;">Rp 0</span></div>
                 </div>
-                <div id="health-badge" style="margin-top: 10px; font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 12px; display: inline-block;"></div>
+
                 <div class="dropdown-wrapper" style="position: absolute; top: 8px; right: 8px;">
                     <button class="icon-btn" onclick="toggleBalanceMenu(event)" style="padding: 4px;"><svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></button>
                     <div id="balance-dropdown" class="dropdown-content hidden" style="top: 35px; right: 0; min-width: 140px;">
@@ -417,10 +419,10 @@
             <div style="display: flex; gap: 8px; margin-bottom: 10px; width: 100%; align-items: stretch;">
                 <div class="card" style="padding: 8px; margin-bottom: 0; border-color: var(--border-color); flex: 1; display: flex; flex-direction: column; box-sizing: border-box; justify-content: center; border-radius: 12px;">
                     <label id="label-bulan-pencarian" style="font-size:9px; margin-bottom: 4px; font-family: 'Montserrat', sans-serif; text-align: center;">RENTANG WAKTU:</label>
-                    <div style="display:flex; gap: 4px; justify-content:center;">
-                        <input type="text" id="rekap-start-date" readonly onclick="openPicker('rekap-start-date', 'date', '#ffffff')" style="padding:6px; text-align: center; background-image:none; font-size: 11px;">
-                        <span style="color:var(--text-muted); font-size:10px; display:flex; align-items:center;">-</span>
-                        <input type="text" id="rekap-end-date" readonly onclick="openPicker('rekap-end-date', 'date', '#ffffff')" style="padding:6px; text-align: center; background-image:none; font-size: 11px;">
+                    <div style="display:flex; gap: 4px; justify-content:center; align-items: center; width: 100%;">
+                        <input type="text" id="rekap-start-date" readonly onclick="openPicker('rekap-start-date', 'date', '#ffffff')" style="padding:6px 2px; width: 100%; min-width: 0; text-align: center; background-image:none; font-size: 11px; box-sizing: border-box;">
+                        <span style="color:var(--text-muted); font-size:10px; display:flex; align-items:center; flex-shrink: 0;">-</span>
+                        <input type="text" id="rekap-end-date" readonly onclick="openPicker('rekap-end-date', 'date', '#ffffff')" style="padding:6px 2px; width: 100%; min-width: 0; text-align: center; background-image:none; font-size: 11px; box-sizing: border-box;">
                     </div>
                 </div>
                 <button class="btn-main audiowide-regular" onclick="openMutationModal()" style="margin-top: 0; margin-bottom: 0; border-radius: 12px; flex: 1; padding: 8px; font-size: 12px; box-sizing: border-box; background-color: var(--wa-card) !important; border: 1px solid var(--border-color) !important; color: var(--text-light) !important; display:flex; align-items:center; justify-content:center;">⇄ MUTASI SALDO</button>
@@ -1549,21 +1551,22 @@
             let selisih = p.target - terpakai;
             let tSelisih, nSelisih, cSelisih;
             
+            // REVISI LOGIKA WARNA PLOT ANGGARAN
             if (selisih > 0) {
                 tSelisih = "Kurang";
                 nSelisih = `(-${Utils.formatRp(selisih)})`;
-                cSelisih = "var(--danger)";
+                cSelisih = "var(--wa-green)"; // Hijau karena masih ada sisa anggaran
             } else if (selisih < 0) {
                 tSelisih = "Lebih";
                 nSelisih = `(+${Utils.formatRp(Math.abs(selisih))})`;
-                cSelisih = "var(--wa-green)";
+                cSelisih = "var(--danger)"; // Merah karena kelebihan batas
             } else {
                 tSelisih = "Kurang";
                 nSelisih = "(Rp 0)";
-                cSelisih = "var(--wa-green)";
+                cSelisih = "var(--danger)"; // Merah karena jatah anggaran sudah habis pas
             }
             
-            const cBayar = terpakai >= p.target && p.target > 0 ? 'var(--wa-green)' : 'var(--danger)';
+            const cBayar = (terpakai >= p.target && p.target > 0) ? 'var(--danger)' : 'var(--wa-green)';
             
             let persen = 0;
             if (p.target > 0) { persen = Math.min((terpakai / p.target) * 100, 100); }
@@ -1581,7 +1584,7 @@
                 <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted); margin-top:-4px;">
                     <span>Bayar: <span style="color:${cBayar}; font-weight:bold;">${Utils.formatRp(terpakai)}</span></span>
                 </div>
-                <div class="progress-container" style="height: 6px; background: #000; border-radius: 3px; overflow: hidden;"><div class="progress-bar" style="height: 100%; width:${Math.min(persen, 100)}%; background: ${selisih < 0 ? 'var(--wa-green)' : (selisih === 0 ? 'var(--wa-green)' : 'var(--danger)')};"></div></div>
+                <div class="progress-container" style="height: 6px; background: #000; border-radius: 3px; overflow: hidden;"><div class="progress-bar" style="height: 100%; width:${Math.min(persen, 100)}%; background: ${cBayar};"></div></div>
             </div>`;
         });
         wadah.innerHTML = htmlList;
@@ -1646,7 +1649,6 @@
             return item.date >= tglStart && item.date <= tglEnd;
         });
 
-        // REVISI LOGIKA SORTING (Murni Descending: Timestamp/ID -> Tanggal)
         gabungan.sort((a, b) => {
             const dateA = a.date || '2000-01-01';
             const dateB = b.date || '2000-01-01';
