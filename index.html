@@ -537,7 +537,6 @@
             <button class="btn-main btn-red audiowide-regular" id="btn-save-out" onclick="saveData(event, 'expense')">Simpan Pengeluaran</button>
         </div>
     </div>
-    
     <div id="rekap" class="page hidden">
         <div class="form-group" style="position:relative; margin-bottom: 8px;">
             <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -997,7 +996,7 @@
     // 1. PENGATURAN AWAL & VARIABEL GLOBAL
     // =========================================================
     const APP_VERSION = "4.0"; 
-    const CLOUD_URL = "https://script.google.com/macros/s/AKfycbwYTtlENRCq0oGoM85sJDKKqrGZ66yWMblrsdNeBSEzOa54c0XkClG9scd5ypeTrZU2/exec";
+    const CLOUD_URL = "https://script.google.com/macros/s/AKfycby3ixDywCn1-Y1G-EYYzzTwXWVbcc3D-Isfer49hjgev5USQUOe_3QRHW3-AIcnQupY/exec";
     
     try {
         if ('serviceWorker' in navigator) {
@@ -1079,7 +1078,6 @@
             }
         }, 50); 
     }
-
     // =========================================================
     // 4. UTILITAS UMUM & PARSER EKSTREM (O(N) STRING)
     // =========================================================
@@ -1093,6 +1091,7 @@
         amanJS: (teks) => {
             if (!teks) return "";
             return String(teks)
+                .replace(/&/g, '&amp;')    
                 .replace(/\\/g, '\\\\')    
                 .replace(/'/g, "\\'")      
                 .replace(/"/g, '&quot;')   
@@ -1138,7 +1137,6 @@
             cursorPos = cursorPos + (newLength - originalLength);
             input.setSelectionRange(cursorPos, cursorPos);
         },
-        // Anti-ReDos String Extractor untuk menggantikan regex mematikan /^(.*?)\s*\(([^)]+)\)$/
         extractNameAndNote: (rawText) => {
             if (!rawText) return { name: "", note: "" };
             const text = String(rawText).trim();
@@ -1153,6 +1151,7 @@
             return { name: text, note: "" };
         }
     };
+
     function animateValue(obj, start, end, duration) {
         if (!obj) return;
         if (obj.animationId) cancelAnimationFrame(obj.animationId);
@@ -1402,7 +1401,7 @@
     });
 
     document.addEventListener('click', e => {
-        const rippleTarget = e.target.closest('button.btn-main, .modal-btn, .tab, .dropdown-item');
+        let rippleTarget = e.target.closest('button.btn-main, .modal-btn, .tab, .dropdown-item');
         if (rippleTarget && !rippleTarget.disabled) {
             const rect = rippleTarget.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -1414,7 +1413,11 @@
             ripple.style.left = x - size/2 + 'px';
             ripple.style.top = y - size/2 + 'px';
             rippleTarget.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 600);
+            
+            setTimeout(() => {
+                if (ripple && ripple.parentNode) ripple.remove();
+                rippleTarget = null; 
+            }, 600);
         }
 
         const menu = document.getElementById('dropdown-menu');
@@ -1564,7 +1567,6 @@
     function closeAboutModal() { 
         tutupModalAman('about-modal');
     }
-
     // =========================================================
     // 8. CLOUD BACKUP & LOAD
     // =========================================================
@@ -2069,16 +2071,19 @@
 
             if (!tgl || rawAmount === '' || isNaN(nom) || nom <= 0 || !ket) {
                 showPopup('alert', "Mohon lengkapi semua data dengan benar!", warnaTema);
+                isGlobalSubmitting = false;
+                if (btn) btn.disabled = false;
                 return; 
             }
             
             if (tipe === 'expense') {
                 if (getSaldoDompet(dmp) < nom) {
                     showPopup('alert', `Saldo [${dmp}] tidak mencukupi!`, warnaTema);
+                    isGlobalSubmitting = false; 
+                    if (btn) btn.disabled = false;
                     return; 
                 }
                 if (dmp === 'Dana Darurat 🔒') {
-                    // Early return untuk asynchronous pin, pelepasan mutex di handle dalam callback
                     verifyPin(() => {
                         try { prosesSimpanAkhir(tipe, tgl, ket, nom, dmp, plt, pfx); } 
                         catch (e) { showPopup('alert', "Gagal memproses simpan.", warnaTema); } 
@@ -2103,7 +2108,6 @@
             const pfx = tipe === 'income' ? 'in' : 'out';
             const walletEl = document.getElementById(`${pfx}-wallet`);
             const dmp = walletEl ? walletEl.value : '';
-            // Lepas Mutex KECUALI alur terpecah ke verifyPin
             if (!(tipe === 'expense' && dmp === 'Dana Darurat 🔒')) {
                 isGlobalSubmitting = false;
                 if (btn) setTimeout(() => { btn.disabled = false; }, 1500);
@@ -2337,7 +2341,7 @@
     }
 
     // =========================================================
-    // 11. RENDER ENGINE & GRAFIK (DOM Optimization & Memory Fix)
+    // 11. RENDER ENGINE & GRAFIK
     // =========================================================
     function updatePlotList() {
         const filterEl = document.getElementById('plot-month-filter'); if(!filterEl) return;
@@ -2540,6 +2544,7 @@
             options: { aspectRatio: 1.5, cutout: '70%', plugins: { legend: { display: !portKosong, position: 'right', labels: { color: '#cccccc', font: { size: 10, family: 'Montserrat' }, boxWidth: 12 } }, tooltip: { enabled: !portKosong } }, animation: { animateScale: true, animateRotate: true, duration: 600 } } 
         });
     }
+
     // =========================================================
     // 12. EXCEL IMPORT / EXPORT (UNIVERSAL REGEX PARSER)
     // =========================================================
@@ -2877,12 +2882,19 @@
         AppState.db[ModeEkstraAktif].forEach(t => {
             t.paidAmount = t.paidAmount || 0; if (!t.paymentIds) t.paymentIds = [];
             if (t.status === 'selesai') { 
-                selesaiItems.push(t); 
+                const d = new Date();
+                const bulanIniLokal = `/${d.getMonth() + 1}/${d.getFullYear()}`; 
+                const bulanIniISO = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; 
+                
+                const tglLunas = t.dateOut || "";
+                
+                if (tglLunas.includes(bulanIniLokal) || tglLunas.includes(bulanIniISO)) {
+                    selesaiItems.push(t); 
+                }
             } else {
                 let baseName = String(t.nama).trim();
                 let itemName = baseName;
 
-                // EKSTRAKSI NAMA CERDAS: Menggunakan Utilitas O(N) Anti-ReDoS
                 const extracted = Utils.extractNameAndNote(baseName);
                 if (extracted.note) {
                     baseName = extracted.name; 
@@ -2892,7 +2904,6 @@
                     if (t.catatan) itemName = t.catatan;
                 }
 
-                // SMART PLOT: Gunakan nama Plot jika itemName kosong (Tagihan Pengingat)
                 if (ModeEkstraAktif === 'pengingat' && t.tipe === 'tagihan' && t.defaultPlotId) {
                     const plotTerkait = AppState.db.plots.find(p => p.id === t.defaultPlotId);
                     if (plotTerkait && (itemName === baseName || itemName === '')) {
@@ -2952,7 +2963,6 @@
                 html += `<li class="titipan-item"><div class="titipan-header"><div class="titipan-name"><span style="color:var(--text-light);">${tipeIcon}${Utils.amanHTML(t.itemNameDisplay)}</span>${jatuhTempoHtml}</div><div style="display:flex; align-items:center; gap:10px;"><span class="titipan-amount" style="font-size:13px; font-weight:700; color:${cfg.warna};">${Utils.formatRp(sisa)}</span>${hapusAktifBtn}</div></div>${progressHtml}<div class="titipan-actions" style="display:flex; gap:8px; margin-top:8px; align-items:center;">${showRiwayatBtn}<div style="flex:1;"></div>${waBtn}<button class="extra-btn" style="color:var(--text-light); border:1px solid var(--border-color);" onclick="bukaFormExtra('edit', '${t.id}')">EDIT</button>${btnAksi}</div></li>`;
             });
             
-            // TOMBOL SHORTCUT TAMBAH CATATAN DALAM GRUP
             html += `<div style="text-align:center; padding: 12px 0 5px 0;"><button class="extra-btn" style="color:${cfg.warna}; border: 1px dashed ${cfg.warna}; width:100%; padding:10px; background: transparent;" onclick="bukaFormExtra('tambah', null, '${Utils.amanJS(g.namaDisplay)}', '${Utils.amanJS(g.noWA || '')}')">+ TAMBAH CATATAN UNTUK ${Utils.amanHTML(g.namaDisplay).toUpperCase()}</button></div>`;
             html += `</div>`; 
         });
@@ -2986,7 +2996,6 @@
 
     function tutupModalExtra() { tutupModalAman('extra-modal'); }
 
-    // FORM DUA WAJAH & AUTO-CONCATENATION (Anti-ReDoS Implemented)
     function bukaFormExtra(mode, id = null, shortcutNama = null, shortcutWA = null) {
         const cfg = DB_EKSTRA[ModeEkstraAktif], tglHariIni = Utils.tglHariIni();
         document.getElementById('extra-date').dataset.rawDate = tglHariIni; document.getElementById('extra-date').value = Utils.formatTglTampil(tglHariIni); document.getElementById('extra-date').setAttribute('onclick', `openPicker('extra-date', 'date', '${cfg.warna}')`);
@@ -3057,7 +3066,6 @@
             document.getElementById('extra-principal-group').classList.add('hidden'); 
             const data = AppState.db[ModeEkstraAktif].find(x => x.id === id);
             if (data) {
-                // HYDRATION: Belah data lama agar form EDIT rapi tanpa kurung bersarang (Anti-ReDoS Implemented)
                 let baseName = data.nama;
                 let itemCatatan = data.catatan || "";
                 const extracted = Utils.extractNameAndNote(baseName);
@@ -3096,7 +3104,6 @@
 
         const cfg = DB_EKSTRA[ModeEkstraAktif], idEdit = document.getElementById('extra-id-edit').value, noWA = document.getElementById('extra-wa').value.trim();
         
-        // AUTO-CONCATENATION & STORAGE PREP
         const rawNama = document.getElementById('extra-nama').value.trim();
         const rawCatatan = document.getElementById('extra-catatan').value.trim();
         const namaDb = Utils.toTitleCase(rawNama);
@@ -3189,7 +3196,6 @@
         const cfg = DB_EKSTRA[ModeEkstraAktif], data = AppState.db[ModeEkstraAktif].find(x => x.id === id); if (!data) return;
         const sisa = data.amount - (data.paidAmount || 0); document.getElementById('cicil-id-item').value = id; 
         
-        // Deskripsi Bayar: Tampilkan nama item kalau ada, kalau ga ada nama orang (Anti-ReDoS Implemented)
         let dispName = data.nama;
         const extracted = Utils.extractNameAndNote(data.nama);
         if (extracted.note) dispName = `${extracted.name} (${extracted.note})`;
@@ -3253,6 +3259,13 @@
                 const sisaSetelahBayar = Math.round(dataExt.amount - dataExt.paidAmount);
 
                 if (ModeEkstraAktif === 'pengingat' && dataExt.tipe === 'tagihan' && (dataExt.freq === 'bulanan' || dataExt.freq === 'tahunan')) {
+                    if (sisaSetelahBayar <= 100 && sisaSetelahBayar > 0) { 
+                        // Tambal Jurnal untuk Sapu Bersih Tagihan Rutin agar Double Entry Balance
+                        dataExt.paidAmount = dataExt.amount;
+                        AppState.db.income.push({ 
+                            id: Utils.buatId(), date: Utils.tglHariIni(), desc: `Koreksi Pembulatan Ekstra: ${labelItem}`, amount: sisaSetelahBayar, wallet: dompet 
+                        });
+                    }
                     if (sisaSetelahBayar <= 100) { 
                         const rawDateDue = dataExt.dueDate || Utils.tglHariIni();
                         const dParts = rawDateDue.split('-');
@@ -3277,7 +3290,7 @@
                         nextDue.setDate(Math.min(origD, maxDays));
                         
                         dataExt.dueDate = `${nextDue.getFullYear()}-${String(nextDue.getMonth() + 1).padStart(2, '0')}-${String(nextDue.getDate()).padStart(2, '0')}`;
-                        dataExt.paidAmount = sisaSetelahBayar < 0 ? Math.abs(sisaSetelahBayar) : 0; 
+                        dataExt.paidAmount = 0; 
                         dataExt.status = 'aktif'; 
                         dataExt.dateOut = null; 
                         
@@ -3286,13 +3299,28 @@
                         showToast(`Dicicil ${Utils.formatRp(bayar)}. Belum lunas!`, cfg.warna); 
                     }
                 } else {
-                    if (sisaSetelahBayar <= 100) { 
+                    if (sisaSetelahBayar <= 100 && sisaSetelahBayar > 0) { 
                         dataExt.paidAmount = dataExt.amount; 
                         dataExt.status = 'selesai'; 
                         dataExt.dateOut = `Lunas pada: ${tglStr}`; 
-                        showToast(`Lunas Sempurna!`, cfg.warna); 
-                    } 
-                    else { showToast(`Pembayaran Berhasil! Sisa: ${Utils.formatRp(sisaSetelahBayar)}`, cfg.warna); }
+                        
+                        AppState.db.income.push({ 
+                            id: Utils.buatId(), 
+                            date: Utils.tglHariIni(), 
+                            desc: `Koreksi Pembulatan Ekstra: ${labelItem}`, 
+                            amount: sisaSetelahBayar, 
+                            wallet: dompet 
+                        });
+                        
+                        showToast(`Lunas Sempurna! (Bonus Rp ${sisaSetelahBayar})`, cfg.warna); 
+                    } else if (sisaSetelahBayar === 0) {
+                        dataExt.paidAmount = dataExt.amount; 
+                        dataExt.status = 'selesai'; 
+                        dataExt.dateOut = `Lunas pada: ${tglStr}`; 
+                        showToast(`Lunas Sempurna!`, cfg.warna);
+                    } else { 
+                        showToast(`Pembayaran Berhasil! Sisa: ${Utils.formatRp(sisaSetelahBayar)}`, cfg.warna); 
+                    }
                 }
                 
                 simpanDatabase(); updateRekap(true); updateWalletDropdownBalances(); tutupModalAman('extra-cicil-modal'); renderDaftarExtra();
@@ -3372,7 +3400,7 @@
     function cekNotifikasiJatuhTempo() {
         const hariIniStr = Utils.tglHariIni();
         const lastNotif = localStorage.getItem('FamBarla_LastNotif');
-        if (lastNotif === hariIniStr) return; // Mencegah SPAM, sudah muncul hari ini
+        if (lastNotif === hariIniStr) return; 
 
         const hariIni = new Date(); hariIni.setHours(0, 0, 0, 0); const currY = hariIni.getFullYear(), currM = hariIni.getMonth();
         let warningList = [];
@@ -3399,7 +3427,6 @@
             const selisihHari = Math.round((tglJatuhTempoBulanIni - hariIniUTC) / (1000 * 60 * 60 * 24));
 
             if (selisihHari <= 3) {
-                // Formatting Nama yang rapi di pop-up (Anti-ReDoS Implemented)
                 let namaTampil = item.nama;
                 const extracted = Utils.extractNameAndNote(namaTampil);
                 if (!extracted.note && item.catatan) {
@@ -3479,7 +3506,7 @@
              if(extractedOuter.note) keteranganBarang = ` (${extractedOuter.note})`;
         }
 
-        const pesan = `Ini adalah pesan otomatis, bahwa Anda memiliki tagihan ${jenis} ${teksTenor} dari ${keteranganBarang} yang tercatat pada sistem kami.\n\n📌 *RINCIAN TAGIHAN:*\n- Jatuh Tempo : *${tglJatuhTempo}*\n${teksPinjamanAwal}\n- Tagihan Bulan Ini : *Rp ${tagihanBulanIni.toLocaleString('id-ID')}*\n\n💡 *INFORMASI SALDO:*\nSisa total tagihan Anda saat ini adalah *Rp ${sisaSekarang.toLocaleString('id-ID')}*.\nJika Anda melakukan pembayaran untuk tagihan bulan ini, maka sisa tagihan global Anda akan tersisa *Rp ${sisaSetelahBayar.toLocaleString('id-ID')}*.`;
+        const pesan = `Ini adalah pesan otomatis, bahwa Anda memiliki tagihan ${jenis} ${teksTenor}${keteranganBarang} yang tercatat pada sistem kami.\n\n📌 *RINCIAN TAGIHAN:*\n- Jatuh Tempo : *${tglJatuhTempo}*\n${teksPinjamanAwal}\n- Tagihan Bulan Ini : *Rp ${tagihanBulanIni.toLocaleString('id-ID')}*\n\n💡 *INFORMASI SALDO:*\nSisa total tagihan Anda saat ini adalah *Rp ${sisaSekarang.toLocaleString('id-ID')}*.\nJika Anda melakukan pembayaran untuk tagihan bulan ini, maka sisa tagihan global Anda akan tersisa *Rp ${sisaSetelahBayar.toLocaleString('id-ID')}*.`;
         
         window.open(`https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}`, '_blank');
     }
