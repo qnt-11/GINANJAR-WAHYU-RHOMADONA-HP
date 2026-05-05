@@ -1,7 +1,7 @@
 /**
  * SERVICE WORKER uang famBARLA (ENTERPRISE SECURITY & SMART CACHE)
- * Versi 4.0.1 (MASTERPIECE EDITION - ENTERPRISE PATCHED + PDF SUPPORT)
- * Arsitektur: Synchronous WaitUntil SWR, Async/Await GC, & Anti-Opaque
+ * Versi 4.0.1 (MASTERPIECE EDITION - ENTERPRISE PATCHED)
+ * Arsitektur: Synchronous WaitUntil SWR, Promise-Queued Garbage Collector, & Anti-Opaque
  */
 
 const APP_VERSION = '4.0.1'; 
@@ -9,7 +9,6 @@ const CACHE_PREFIX = 'uang-fambarla-';
 const CACHE_STATIC = CACHE_PREFIX + 'static-v' + APP_VERSION;
 const CACHE_DYNAMIC = CACHE_PREFIX + 'dynamic-v' + APP_VERSION;
 
-// [FIX MUTLAK 1] Tambahkan Library HTML2PDF agar Fitur Cetak PDF bisa jalan saat OFFLINE!
 const staticAssets = [
   './',
   './index.html',
@@ -17,27 +16,23 @@ const staticAssets = [
   './icon-192.png',
   './icon-512.png',
   'https://cdn.jsdelivr.net/npm/chart.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
+  'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
 ];
 
 // Antrean Promise Absolut untuk mematikan Creeping Cache Leak
 let gcQueue = Promise.resolve();
 
-// [FIX MUTLAK 2] Merombak struktur Queue menggunakan Async/Await + Try/Catch (Anti-Deadlock)
 const limitCacheSize = (name, size) => {
-  gcQueue = gcQueue.then(async () => {
-    try {
-      const cache = await caches.open(name);
-      const keys = await cache.keys();
-      if (keys.length > size) {
-        const keysToDelete = keys.slice(0, keys.length - size);
-        await Promise.all(keysToDelete.map(key => cache.delete(key)));
-      }
-    } catch (err) {
-      console.warn('[SW] GC Terganggu, tapi Queue tetap jalan:', err);
-    }
-  });
+  gcQueue = gcQueue.then(() => {
+    return caches.open(name).then(cache => {
+      return cache.keys().then(keys => {
+        if (keys.length > size) {
+          const keysToDelete = keys.slice(0, keys.length - size);
+          return Promise.all(keysToDelete.map(key => cache.delete(key)));
+        }
+      });
+    });
+  }).catch(err => console.warn('[SW] GC Terganggu:', err));
 };
 
 self.addEventListener('install', event => {
@@ -185,7 +180,7 @@ self.addEventListener('fetch', event => {
     if (networkResponse && networkResponse.ok && networkResponse.type !== 'opaque') {
       const clone = networkResponse.clone();
       
-      // INJEKSI LIFECYCLE: Mengunci cache.put dan GC agar SW tidak mati prematur
+      // [FIX] INJEKSI LIFECYCLE: Mengunci cache.put dan GC agar SW tidak mati prematur
       event.waitUntil(
         caches.open(CACHE_DYNAMIC).then(cache => {
           return cache.put(req, clone).then(() => limitCacheSize(CACHE_DYNAMIC, 60));
