@@ -39,7 +39,7 @@
             background-color: var(--wa-bg); color: var(--text-light);
             display: flex; flex-direction: column; overflow: hidden; 
         }
-        body.modal-open { overflow: hidden; pointer-events: none; }
+        body.modal-open { overflow: hidden; pointer-events: none; -webkit-overflow-scrolling: touch; }    
         body.modal-open .modal-overlay { pointer-events: auto; }
 
         .hidden { display: none !important; }
@@ -179,12 +179,12 @@
         .custom-select-trigger::after { content: '▼'; font-size: 10px; color: var(--text-muted); flex-shrink: 0; margin-left: 10px;}
         .custom-select-options {
             position: absolute; top: 100%; left: 0; right: 0; 
-            background: rgba(21, 21, 21, 0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--border-color); border-radius: 8px; margin-top: 5px; z-index: 999; 
-            overflow-y: auto; overflow-x: hidden; max-height: 180px; overscroll-behavior: contain; box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+            background: rgba(21, 21, 21, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color); border-radius: 8px; margin-top: 5px; z-index: 99999; 
+            overflow-y: auto; overflow-x: hidden; max-height: 35vh; overscroll-behavior: contain; box-shadow: 0 15px 35px rgba(0,0,0,0.9);
             animation: slideDownGlass 0.2s ease-out; border-top: 1px solid rgba(255,255,255,0.1);
         }
-        #in-wallet-opts, #out-wallet-opts, #extra-wallet-opts, #cicil-wallet-opts, #edit-wallet-opts, #cicil-plot-opts { max-height: none; overflow-y: visible; }
+        
         .custom-option { padding: 14px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; color: var(--text-light); font-size: 14px; font-weight: 500; transition: 0.2s;}
         @media (hover: hover) { .custom-option:hover { background-color: rgba(255, 255, 255, 0.08); } }
         .custom-option:active { background-color: rgba(255, 255, 255, 0.15); }
@@ -270,9 +270,9 @@
             will-change: transform, opacity;
         }
         
-        #edit-modal .modal-box, #cloud-load-modal .modal-box, #import-modal .modal-box, #extra-form-box { max-height: 85vh; overflow-y: auto; overscroll-behavior: contain; }
-        #mutation-modal .modal-box { overflow: visible; max-height: none; }
-        
+        #edit-modal .modal-box, #cloud-load-modal .modal-box, #import-modal .modal-box, #extra-form-box { max-height: 85vh; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+        #mutation-modal .modal-box, #extra-cicil-box { overflow: visible; max-height: none; }
+
         .modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
         #modal-text { white-space: pre-wrap; line-height: 1.5; font-size: 13px; font-weight: 600; margin-bottom: 10px; }
         #modal-input { width: 100%; padding: 14px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.5); color: var(--text-light); text-align: center; font-size: 18px; font-weight: 700; box-sizing: border-box; transition: 0.3s; }
@@ -674,7 +674,7 @@
 
 <div id="cloud-load-modal" class="modal-overlay hidden" onclick="if(event.target===this) closeCloudLoadModal()">
     <div class="modal-box" style="border-color: var(--cloud);">
-        <h3 class="audiowide-regular" style="margin-top:0; margin-bottom: 15px; color:var(--cloud); font-size:16px;">Load Data Cloud</h3>
+        <h3 class="audiowide-regular" style="margin-top:0; margin-bottom: 15px; color:var(--cloud); font-size:16px;">☁️ Load Data Cloud</h3>
         <p style="font-size:12px; color:var(--text-muted); margin-bottom: 15px; line-height: 1.5;">Pilih bulan yang ingin ditarik ke HP.</p>
         <div class="form-group" style="text-align:left;">
             <div class="custom-select-container">
@@ -888,21 +888,12 @@
         <h3 id="extra-cicil-title" class="audiowide-regular" style="margin-top:0; margin-bottom: 10px; font-size:15px;">Cicilan</h3>
         <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;"><span id="extra-cicil-desc"></span> <strong id="extra-cicil-nama" style="color:#fff;"></strong></p>
         
-        <div class="form-group" style="text-align:left; margin-bottom: 15px;" id="cicil-nominal-group">
+             <div class="form-group" style="text-align:left; margin-bottom: 15px;" id="cicil-nominal-group">
             <label style="color:var(--wa-green);">Nominal Bayar Saat Ini (Rp)</label>
             <input type="text" inputmode="numeric" id="cicil-nominal" placeholder="0" oninput="Utils.formatRibuanInput(event)">
         </div>
 
-        <div class="form-group" style="text-align:left;" id="cicil-plot-group">
-            <label>Ambil dari Plot (Opsional)</label>
-            <div class="custom-select-container">
-                <div class="custom-select-trigger text-ellipsis" id="cicil-plot-trigger" onclick="toggleCustomSelect('cicil-plot-opts', event)" style="color:var(--text-muted)">-- Tanpa Plot --</div>
-                <div class="custom-select-options hidden" id="cicil-plot-opts"></div>
-            </div>
-            <input type="hidden" id="cicil-plot" value="">
-        </div>
-
-        <div class="form-group" style="text-align:left;">
+        <div class="form-group" style="text-align:left; margin-bottom: 15px;">
             <label id="cicil-wallet-label">Sumber Dana</label>
             <div class="custom-select-container">
                 <div class="custom-select-trigger text-ellipsis" id="cicil-wallet-trigger" onclick="toggleCustomSelect('cicil-wallet-opts', event)">Tunai</div>
@@ -910,6 +901,16 @@
             </div>
             <input type="hidden" id="cicil-wallet" value="Tunai">
         </div>
+
+             <div class="form-group" style="text-align:left; margin-bottom: 15px;" id="cicil-plot-group">
+            <label>Ambil dari Plot (Opsional)</label>
+            <div class="custom-select-container">
+                <div class="custom-select-trigger text-ellipsis" id="cicil-plot-trigger" onclick="toggleCustomSelect('cicil-plot-opts', event)" style="color:var(--text-muted)">-- Tanpa Plot --</div>
+                <div class="custom-select-options hidden" id="cicil-plot-opts"></div>
+            </div>
+            <input type="hidden" id="cicil-plot" value="">
+        </div>
+   
         <input type="hidden" id="cicil-id-item" value="">
         <div class="modal-actions">
             <button id="btn-batal-cicil-extra" class="modal-btn cancel" onclick="tutupModalAman('extra-cicil-modal')">BATAL</button>
