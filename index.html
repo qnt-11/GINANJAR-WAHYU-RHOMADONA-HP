@@ -1082,13 +1082,15 @@
         }
     } catch (e) {}
 
-    // [INJEKSI FITUR]: Menangkap sinyal pembaruan (BroadcastChannel) dari sw.js
+        // [INJEKSI FITUR]: Menangkap sinyal pembaruan (BroadcastChannel) dari sw.js
     if ('BroadcastChannel' in window) {
         const updateChannel = new BroadcastChannel('fambarla-update-channel');
         updateChannel.onmessage = (event) => {
             if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
-                showToast("Versi baru aplikasi tersedia. Memuat ulang sistem...", "var(--cloud)");
-                setTimeout(() => window.location.reload(), 2500);
+                // BUG FIXED: Menggunakan pop-up penahan (blocking) agar tidak me-reload paksa saat user sedang input data
+                showPopup('alert', "Versi baru aplikasi tersedia!\n\nPembaruan telah diunduh. Silakan tekan OK untuk memuat ulang sistem.", "var(--cloud)", () => {
+                    window.location.reload();
+                });
             }
         };
     }
