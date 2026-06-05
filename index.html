@@ -280,28 +280,26 @@
         #modal-input { width: 100%; padding: 14px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.5); color: var(--text-light); text-align: center; font-size: 18px; font-weight: 700; box-sizing: border-box; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         #modal-input:focus { border-color: var(--text-light); box-shadow: 0 0 0 2px rgba(255,255,255,0.1); outline: none; }
         
-        /* [INJEKSI QA UI]: Desain Khusus "Security Vault" untuk Input PIN Angka */
+        /* [INJEKSI QA UI]: Desain Standar untuk Input PIN Angka (Tanpa Cahaya/Animasi) */
         #modal-input[type="password"] {
-            letter-spacing: 20px;
-            padding-left: 34px; /* Kompensasi letter-spacing agar teks tetap di tengah */
-            font-family: 'Audiowide', sans-serif;
-            font-size: 26px;
-            background: #050505;
-            border-width: 2px;
-            box-shadow: inset 0 5px 15px rgba(0,0,0,0.8);
+            letter-spacing: 15px;
+            padding-left: 15px; 
+            font-family: 'Montserrat', sans-serif;
+            font-size: 22px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            box-shadow: none;
+            border-radius: 8px;
+            text-align: center;
         }
         
-        /* Animasi kedip (Breathe) untuk memberikan kesan sistem keamanan aktif */
-        @keyframes vaultBreathe {
-            0%, 100% { box-shadow: inset 0 0 10px currentColor, 0 0 5px currentColor; }
-            50% { box-shadow: inset 0 0 25px currentColor, 0 0 15px currentColor; }
-        }
-        
-        /* Efek saat PIN diketik atau difokuskan */
+        /* Efek saat PIN diketik atau difokuskan (Standar Minimalis) */
         #modal-input[type="password"]:focus {
-            transform: scale(1.05);
-            animation: vaultBreathe 2s infinite ease-in-out;
-            /* Warna border dan shadow akan mengikuti warna yang disuntikkan oleh JavaScript */
+            transform: none;
+            animation: none;
+            border-color: var(--text-light);
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.1);
+            outline: none;
         }
         .loader { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--cloud); border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; margin: 10px auto 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -732,7 +730,7 @@
                 <span class="title-barla"><span class="letter" style="animation-delay: 1.4s">B</span><span class="letter" style="animation-delay: 1.6s">A</span><span class="letter" style="animation-delay: 1.8s">R</span><span class="letter" style="animation-delay: 2.0s">L</span><span class="letter" style="animation-delay: 2.2s">A</span></span>
             </h2>
             <div style="margin-top: 8px;">
-                <span id="app-version-display" style="background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 12px; color: #ffffff; font-family: 'Montserrat', sans-serif; font-weight: 700; letter-spacing: 1px; font-size: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.5);">VERSI 6.3 (PRO)</span>
+                <span id="app-version-display" style="background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 12px; color: #ffffff; font-family: 'Montserrat', sans-serif; font-weight: 700; letter-spacing: 1px; font-size: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.5);">VERSI 6.4 (PRO)</span>
             </div>
         </div>
         
@@ -983,8 +981,8 @@
 </div>
 <input type="file" id="file-import" accept=".xlsx, .xls" class="hidden" onchange="importFromExcel(event)">
 <script>
-    const APP_VERSION = "6.3"; 
-    const CLOUD_URL = "https://script.google.com/macros/s/AKfycbxK_Mltjp9Z_YB-kGmRQ0lumNoLQScr5XnaU7uRYyCSoIYRstMOnopo-zxUKKtrDYKW/exec";
+    const APP_VERSION = "6.4"; 
+    const CLOUD_URL = "https://script.google.com/macros/s/AKfycbyFdIvshvdsBiuk5hrL7M3bV502tYXI_4lCo4ZHuZzW76IV93LR8MTbi_8v957tIgY1/exec";
     const CLOUD_TOKEN = "Rahas1aFambarLa2026";
     const PIN_DARURAT = "170823";
 
@@ -1498,23 +1496,14 @@
         }
     }
 
-        async function verifyPin(callback, onCancelOrFail) {
-        try {
-            // [INJEKSI QA]: Coba panggil sensor biometrik (WebAuthn)
-            // Jika belum terdaftar, otomatis memunculkan prompt pendaftaran sidik jari.
-            await CoreEngine.triggerBiometric();
-            showToast("Autentikasi Biometrik Sukses!", "var(--wa-green)");
-            if (callback) callback();
-        } catch (error) {
-            console.warn("Biometrik gagal atau dibatalkan:", error);
-            // Fallback: Jika HP tidak mendukung, atau pengguna menekan "Batal", tampilkan PIN Manual
-            let pesan = localStorage.getItem('FamBarla_BioID') ? 'Biometrik gagal. Masukkan PIN Cadangan 🔒:' : 'Daftarkan sidik jari atau Masukkan PIN Keamanan 🔒:';
-            
-            showPopup('pin', pesan, 'var(--danger)', (val) => {
-                if (val === PIN_DARURAT) { if (callback) callback(); } 
-                else { showPopup('alert', 'Batal: PIN Salah!', 'var(--danger)'); if (onCancelOrFail) onCancelOrFail(); }
-            });
-            const btnBatal = document.getElementById('modal-btn-cancel');
+            function verifyPin(callback, onCancelOrFail) {
+            showPopup('pin', 'Masukkan PIN Keamanan 🔒:', 'var(--danger)', (val) => {
+            if (val === PIN_DARURAT) { if (callback) callback(); } 
+            else { showPopup('alert', 'Batal: PIN Salah!', 'var(--danger)'); if (onCancelOrFail) onCancelOrFail(); }
+        });
+        
+        const btnBatal = document.getElementById('modal-btn-cancel');
+        if (btnBatal) {
             btnBatal.onclick = () => { tutupModalAman('custom-modal'); if (onCancelOrFail) onCancelOrFail(); };
         }
     }
@@ -2389,8 +2378,9 @@
             return new Date(Date.UTC(1899, 11, 30 + days, 12, 0, 0)).toISOString().split('T')[0]; 
         }
         // Penanganan format String/Teks dengan Deteksi Cerdas
-                if (typeof val === 'string') { 
-            let p = val.split(/[-/]/); 
+                        if (typeof val === 'string') { 
+            let cleanVal = val.split(' ')[0].split('T')[0]; // Ekstrak murni tanggal, sterilkan time/timezone
+            let p = cleanVal.split(/[-/]/); 
             if (p.length === 3) {
                 if (p[2].length === 4) {
                     let part0 = parseInt(p[0], 10);
