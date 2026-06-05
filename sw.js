@@ -1,4 +1,4 @@
-const APP_VERSION = '6.3';
+const APP_VERSION = '6.4';
 const CACHE_PREFIX = 'uang-fambarla-';
 const CACHE_STATIC = CACHE_PREFIX + 'static-v' + APP_VERSION;
 const CACHE_DYNAMIC = CACHE_PREFIX + 'dynamic-v' + APP_VERSION;
@@ -120,7 +120,7 @@ self.addEventListener('fetch', event => {
   const isHtmlRequest = req.mode === 'navigate' || (req.headers.get('accept') && req.headers.get('accept').includes('text/html'));
   const cacheKey = isHtmlRequest ? './index.html' : req;
 
-    // STRATEGI 2: STALE-WHILE-REVALIDATE UNTUK HTML + BROADCAST API
+  // STRATEGI 2: STALE-WHILE-REVALIDATE UNTUK HTML + BROADCAST API
   if (isHtmlRequest) {
     event.respondWith(
       caches.match(cacheKey, { ignoreSearch: true }).then(cachedResponse => {
@@ -141,8 +141,10 @@ self.addEventListener('fetch', event => {
                    cache.put(cacheKey, cloneToCache);
                    // HANYA kirim sinyal jika kode HTML lama berbeda dengan kode HTML server (Mencegah Infinite Loop)
                    if (cachedText !== netText) {
-                       const channel = new BroadcastChannel('fambarla-update-channel');
-                       channel.postMessage({ type: 'UPDATE_AVAILABLE', message: 'Pembaruan aplikasi berhasil diunduh.' });
+                       if (typeof BroadcastChannel !== 'undefined') {
+                           const channel = new BroadcastChannel('fambarla-update-channel');
+                           channel.postMessage({ type: 'UPDATE_AVAILABLE', message: 'Pembaruan aplikasi berhasil diunduh.' });
+                       }
                    }
                });
             } else {
