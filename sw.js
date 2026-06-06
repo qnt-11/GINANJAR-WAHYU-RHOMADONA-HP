@@ -1,4 +1,4 @@
-const APP_VERSION = '6.5';
+const APP_VERSION = '6.6';
 const CACHE_PREFIX = 'uang-fambarla-';
 const CACHE_STATIC = CACHE_PREFIX + 'static-v' + APP_VERSION;
 const CACHE_DYNAMIC = CACHE_PREFIX + 'dynamic-v' + APP_VERSION;
@@ -165,8 +165,8 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // STRATEGI 3: CACHE-FIRST UNTUK GOOGLE FONTS
-  if (reqUrl.hostname === 'fonts.gstatic.com' || reqUrl.hostname === 'fonts.googleapis.com') {
+    // STRATEGI 3: CACHE-FIRST UNTUK GOOGLE FONTS
+    if (reqUrl.hostname === 'fonts.gstatic.com' || reqUrl.hostname === 'fonts.googleapis.com') {
     event.respondWith(
       caches.match(req).then(cachedRes => {
         return cachedRes || fetch(req).then(networkRes => {
@@ -187,8 +187,8 @@ self.addEventListener('fetch', event => {
   });
   const isCDNStatic = staticAssets.some(asset => asset.startsWith('http') && reqUrl.href === asset);
 
-  // STRATEGI 4: CACHE-FIRST UNTUK ASET STATIS
-  if (isLocalStatic || isCDNStatic) {
+    // STRATEGI 4: CACHE-FIRST UNTUK ASET STATIS
+    if (isLocalStatic || isCDNStatic) {
     event.respondWith(
       caches.match(cacheKey, { ignoreSearch: true }).then(cachedResponse => {
         return cachedResponse || fetch(req).then(networkResponse => {
@@ -203,16 +203,14 @@ self.addEventListener('fetch', event => {
     return;
   } 
 
-  // STRATEGI 5: STALE-WHILE-REVALIDATE UNTUK ASET DINAMIS LAINNYA
+    // STRATEGI 5: STALE-WHILE-REVALIDATE UNTUK ASET DINAMIS LAINNYA
   const cachedResPromise = caches.match(req, { ignoreSearch: true });
   const networkResPromise = fetch(req).then(networkResponse => {
     if (networkResponse && networkResponse.ok && networkResponse.type !== 'opaque') {
       const clone = networkResponse.clone();
-      event.waitUntil(
-        caches.open(CACHE_DYNAMIC).then(cache => {
-          return cache.put(req, clone).then(() => limitCacheSize(CACHE_DYNAMIC, 50));
-        })
-      );
+      caches.open(CACHE_DYNAMIC).then(cache => {
+        cache.put(req, clone).then(() => limitCacheSize(CACHE_DYNAMIC, 50));
+      });
     }
     return networkResponse;
   }).catch(() => Response.error());
