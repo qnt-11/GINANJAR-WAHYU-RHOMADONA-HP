@@ -730,7 +730,7 @@
                 <span class="title-barla"><span class="letter" style="animation-delay: 1.4s">B</span><span class="letter" style="animation-delay: 1.6s">A</span><span class="letter" style="animation-delay: 1.8s">R</span><span class="letter" style="animation-delay: 2.0s">L</span><span class="letter" style="animation-delay: 2.2s">A</span></span>
             </h2>
             <div style="margin-top: 8px;">
-                <span id="app-version-display" style="background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 12px; color: #ffffff; font-family: 'Montserrat', sans-serif; font-weight: 700; letter-spacing: 1px; font-size: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.5);">VERSI 6.4 (PRO)</span>
+                <span id="app-version-display" style="background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 12px; color: #ffffff; font-family: 'Montserrat', sans-serif; font-weight: 700; letter-spacing: 1px; font-size: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.5);">VERSI ❤️</span>
             </div>
         </div>
         
@@ -981,8 +981,8 @@
 </div>
 <input type="file" id="file-import" accept=".xlsx, .xls" class="hidden" onchange="importFromExcel(event)">
 <script>
-    const APP_VERSION = "6.4"; 
-    const CLOUD_URL = "https://script.google.com/macros/s/AKfycbyFdIvshvdsBiuk5hrL7M3bV502tYXI_4lCo4ZHuZzW76IV93LR8MTbi_8v957tIgY1/exec";
+    const APP_VERSION = "6.6"; 
+    const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzR3ufkrRinfGfNNZ2ofyokNz561eDJ-DmrODIc8ocbtU5Q1B8zn4Hw17qbhlA4Ycsd/exec";
     const CLOUD_TOKEN = "Rahas1aFambarLa2026";
     const PIN_DARURAT = "170823";
 
@@ -992,26 +992,36 @@
     // =========================================================
     const CoreEngine = {
         db: null,
+                ramCache: {},
         async initDB() {
-            return new Promise((resolve, reject) => {
-                const req = indexedDB.open('FamBarla_SecureVault', 1);
-                req.onupgradeneeded = e => e.target.result.createObjectStore('encrypted_store');
-                req.onsuccess = e => { this.db = e.target.result; resolve(); };
-                req.onerror = e => reject(e);
+            return new Promise((resolve) => {
+                try {
+                    if (!window.indexedDB) throw new Error("IDB_BLOCKED");
+                    const req = indexedDB.open('FamBarla_SecureVault', 1);
+                    req.onupgradeneeded = e => e.target.result.createObjectStore('encrypted_store');
+                    req.onsuccess = e => { this.db = e.target.result; resolve(); };
+                    req.onerror = () => { resolve(); };
+                } catch (e) { resolve(); } // Fallback memori RAM jika diakses via content://
             });
         },
         async idbSet(key, val) {
-            return new Promise((resolve, reject) => {
-                const tx = this.db.transaction('encrypted_store', 'readwrite');
-                tx.objectStore('encrypted_store').put(val, key);
-                tx.oncomplete = resolve; tx.onerror = reject;
+            if (!this.db) { this.ramCache[key] = val; return; }
+            return new Promise((resolve) => {
+                try {
+                    const tx = this.db.transaction('encrypted_store', 'readwrite');
+                    tx.objectStore('encrypted_store').put(val, key);
+                    tx.oncomplete = resolve; tx.onerror = resolve;
+                } catch(e) { this.ramCache[key] = val; resolve(); }
             });
         },
         async idbGet(key) {
-            return new Promise((resolve, reject) => {
-                const tx = this.db.transaction('encrypted_store', 'readonly');
-                const req = tx.objectStore('encrypted_store').get(key);
-                req.onsuccess = () => resolve(req.result); req.onerror = reject;
+            if (!this.db) return this.ramCache[key];
+            return new Promise((resolve) => {
+                try {
+                    const tx = this.db.transaction('encrypted_store', 'readonly');
+                    const req = tx.objectStore('encrypted_store').get(key);
+                    req.onsuccess = () => resolve(req.result); req.onerror = () => resolve(this.ramCache[key]);
+                } catch(e) { resolve(this.ramCache[key]); }
             });
         },
         // AES-256-GCM Encryption
@@ -1023,7 +1033,7 @@
                 keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
             );
         },
-        async encryptDB(dataStr, pin) {
+                async encryptDB(dataStr, pin) {
             if (!window.crypto || !window.crypto.subtle) return btoa(encodeURIComponent(dataStr)); // Fallback Base64 jika WebCrypto mati
             const key = await this.deriveKey(pin);
             const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -1031,8 +1041,17 @@
             const cipher = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, enc.encode(dataStr));
             const combined = new Uint8Array(iv.length + cipher.byteLength);
             combined.set(iv, 0); combined.set(new Uint8Array(cipher), iv.length);
-            return btoa(String.fromCharCode(...combined));
+            
+                        // [INJEKSI QA]: Pemecahan metode perulangan 'Chunking' 
+            // Menghindari CRASH "Maximum call stack size exceeded" pada database masif (>65.535 limit argumen per Call Stack JS)
+            let binary = '';
+            const chunkSize = 8192;
+            for (let i = 0; i < combined.length; i += chunkSize) {
+                binary += String.fromCharCode.apply(null, combined.subarray(i, i + chunkSize));
+            }
+            return btoa(binary);
         },
+
         async decryptDB(encryptedB64, pin) {
             if (!window.crypto || !window.crypto.subtle) return decodeURIComponent(atob(encryptedB64)); // Fallback Base64
             const key = await this.deriveKey(pin);
@@ -1276,11 +1295,14 @@
         try {
             let dataTersimpan = await CoreEngine.idbGet('famBARLA_DB_Encrypted');
             
-            // Auto-Migrasi dari LocalStorage lama (Jika ada)
-            if (!dataTersimpan && localStorage.getItem('famBARLA_DB')) {
-                dataTersimpan = await CoreEngine.encryptDB(localStorage.getItem('famBARLA_DB'), PIN_DARURAT);
+                        // Auto-Migrasi dari LocalStorage lama (Jika ada)
+            let dataLokalBiasa = null;
+            try { dataLokalBiasa = localStorage.getItem('famBARLA_DB'); } catch(e) {} // Amankan dari SecurityError content://
+
+            if (!dataTersimpan && dataLokalBiasa) {
+                dataTersimpan = await CoreEngine.encryptDB(dataLokalBiasa, PIN_DARURAT);
                 await CoreEngine.idbSet('famBARLA_DB_Encrypted', dataTersimpan);
-                localStorage.removeItem('famBARLA_DB'); // Bersihkan jejak lama
+                try { localStorage.removeItem('famBARLA_DB'); } catch(e) {}
             }
 
             if (dataTersimpan) {
@@ -1538,7 +1560,7 @@
                     if (dataRes && dataRes.error) throw new Error(dataRes.error);
                     return dataRes;
                 })
-                .then(res => { tutupModalAman('custom-modal'); showToast("Berhasil di-Upload ke Cloud!", 'var(--cloud)'); })
+                .then(res => { tutupModalAman('custom-modal'); showToast("Berhasil di-Upload", 'var(--cloud)'); })
                 .catch(err => { 
                     clearTimeout(timeoutId); 
                     let msg = err.message || "Gagal mengunggah! Pastikan koneksi internet aktif.";
@@ -1552,7 +1574,7 @@
 
     function loadFromCloud() {
         tutupSemuaMenuDrop();
-        if (isNetworkProcessing) return showToast("Sedang memproses jaringan...", 'var(--cloud)');
+        if (isNetworkProcessing) return showToast("Sedang memproses...", 'var(--cloud)');
         if(!CLOUD_URL || CLOUD_URL.includes("ISI_DENGAN")) return showPopup('alert', "Penyimpanan Cloud belum disetel!", 'var(--danger)');
         
         isNetworkProcessing = true; showPopup('loading', "Mencari daftar bulan di Cloud...\nMohon tunggu.", 'var(--cloud)');
@@ -1602,7 +1624,7 @@
     }
 
     function executeLoadCloud(selectedMonth) {
-        if (isNetworkProcessing) return showToast("Sedang memproses jaringan...", 'var(--cloud)');
+        if (isNetworkProcessing) return showToast("Sedang memproses...", 'var(--cloud)');
         isNetworkProcessing = true; showPopup('loading', "Mengunduh data bulan " + selectedMonth + "...\nMohon tunggu.", 'var(--cloud)');
         const noCacheUrl = CLOUD_URL + "?action=loadMonth&month=" + selectedMonth + "&token=" + CLOUD_TOKEN + "&t=" + new Date().getTime();
         const controller = new AbortController(); const timeoutId = setTimeout(() => controller.abort(), 30000);
@@ -1846,35 +1868,34 @@
         limitRekapIn = 15; limitRekapOut = 15; updateRekap(); updateWalletDropdownBalances(); showToast("Berhasil Simpan!", warnaTema); 
     }
 
-    function saveData(event, tipe) {
+        function saveData(event, tipe) {
         if (isGlobalSubmitting) return; isGlobalSubmitting = true;
         const btn = event.currentTarget || event.target; if(btn && btn.tagName === 'BUTTON') btn.disabled = true; 
+        
+        const releaseLock = () => { isGlobalSubmitting = false; if (btn) setTimeout(() => { btn.disabled = false; }, 1500); };
 
         try {
             const pfx = tipe === 'income' ? 'in' : 'out', dateEl = document.getElementById(`${pfx}-date`), descEl = document.getElementById(`${pfx}-desc`), amountEl = document.getElementById(`${pfx}-amount`), walletEl = document.getElementById(`${pfx}-wallet`), plotEl = document.getElementById(`${pfx}-plot`);
-            if(!dateEl || !descEl || !amountEl || !walletEl) return;
+            if(!dateEl || !descEl || !amountEl || !walletEl) return releaseLock();
 
             const tgl = dateEl.dataset.rawDate, ket = descEl.value.trim(), nom = Math.abs(Math.round(Number(amountEl.value.trim().replace(/[^\d]/g, '')))), dmp = walletEl.value, plt = plotEl ? (plotEl.value || "") : "", warnaTema = tipe === 'income' ? 'var(--wa-green)' : 'var(--danger)';
 
-            if (!tgl || isNaN(nom) || nom <= 0 || !ket) return showPopup('alert', "Mohon lengkapi semua data dengan benar!", warnaTema);
-            if (tipe === 'expense' && getSaldoDompet(dmp) < nom) return showPopup('alert', `Saldo [${dmp}] tidak mencukupi!`, warnaTema);
+            if (!tgl || isNaN(nom) || nom <= 0 || !ket) { showPopup('alert', "Mohon lengkapi semua data dengan benar!", warnaTema); return releaseLock(); }
+            if (tipe === 'expense' && getSaldoDompet(dmp) < nom) { showPopup('alert', `Saldo [${dmp}] tidak mencukupi!`, warnaTema); return releaseLock(); }
             
             if (tipe === 'expense' && dmp === 'Dana Darurat 🔒') {
-                return verifyPin(() => {
+                verifyPin(() => {
                     try { prosesSimpanAkhir(tipe, tgl, ket, nom, dmp, plt, pfx); } catch(e) { showPopup('alert', "Gagal memproses simpan.", warnaTema); } 
-                    finally { isGlobalSubmitting = false; if (btn) setTimeout(() => { btn.disabled = false; }, 1500); }
-                }, () => { isGlobalSubmitting = false; if (btn) btn.disabled = false; });
+                    finally { releaseLock(); }
+                }, () => { releaseLock(); });
+                return; 
             }
             prosesSimpanAkhir(tipe, tgl, ket, nom, dmp, plt, pfx);
+            releaseLock();
         } catch (error) { 
             showToast("Terjadi kesalahan sistem, memulihkan status...", "var(--danger)"); 
-        } finally { 
-            const dmp = document.getElementById(tipe === 'income' ? 'in-wallet' : 'out-wallet')?.value; 
-            if (!(tipe === 'expense' && dmp === 'Dana Darurat 🔒')) { 
-                isGlobalSubmitting = false; 
-                if (btn) setTimeout(() => { btn.disabled = false; }, 1500); 
-            } 
-        }
+            releaseLock();
+        } 
     }
 
     function editData(tipe, idItem) {
@@ -3152,16 +3173,28 @@
         }
     });
 
-        window.addEventListener('DOMContentLoaded', async () => { 
-        // Mengamankan layar saat proses Dekripsi Asinkron berjalan
+                        window.addEventListener('DOMContentLoaded', async () => { 
         showPopup('loading', 'Mendekripsi & Membuka Brankas...', 'var(--wa-blue)');
         
-        await CoreEngine.initDB();
-        await muatDatabase();
-        
-        inisiasiKalenderAwal(); updatePlotList(); updateRekap(); updateWalletDropdownBalances(); jalankanJam(); cekNotifikasiJatuhTempo(); showPage(null, 'pemasukan', 0); terapkanVersi(); 
-        
-        tutupModalAman('custom-modal'); // Hilangkan loading screen
+        try {
+            await Promise.race([
+                CoreEngine.initDB(),
+                new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout Brankas DB")), 3000))
+            ]);
+            await muatDatabase();
+        } catch (error) {
+            console.warn("Mode Akses Terbatas Aktif:", error);
+        } finally {
+            try {
+                inisiasiKalenderAwal(); updatePlotList(); updateRekap(); updateWalletDropdownBalances(); jalankanJam(); cekNotifikasiJatuhTempo(); showPage(null, 'pemasukan', 0); terapkanVersi(); 
+            } catch(e) {}
+
+            const loader = document.getElementById('modal-loader');
+            if (loader && !loader.classList.contains('hidden')) { tutupModalAman('custom-modal'); }
+            
+            // Jaminan Mutlak QA 2: Paksa lepaskan kunci layar (Deadlock) yang tersangkut
+            setTimeout(() => { document.body.classList.remove('modal-open'); }, 150);
+        }
     });
 </script>
 </body>
