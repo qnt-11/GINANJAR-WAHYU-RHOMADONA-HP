@@ -981,7 +981,7 @@
 </div>
 <input type="file" id="file-import" accept=".xlsx, .xls" class="hidden" onchange="importFromExcel(event)">
 <script>
-    const APP_VERSION = "7.2"; 
+    const APP_VERSION = "7.3"; 
     const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzR3ufkrRinfGfNNZ2ofyokNz561eDJ-DmrODIc8ocbtU5Q1B8zn4Hw17qbhlA4Ycsd/exec";
     const CLOUD_TOKEN = "Rahas1aFambarLa2026";
     const PIN_DARURAT = "170823";
@@ -1111,12 +1111,19 @@
         }
     }
 
-    try {
+        try {
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js').catch(() => {});
             
+            // [INJEKSI QA FINAL]: Filter Ghost Update (Anti Pop-Up Palsu)
+            let hasController = !!navigator.serviceWorker.controller;
+
             // ANTENA 1 (HARD UPDATE): Mendeteksi saat Service Worker baru (yang agresif) selesai mengambil alih halaman
             navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!hasController) {
+                    hasController = true;
+                    return; // Abaikan! Ini hanya instalasi pertama, BUKAN pembaruan versi.
+                }
                 setTimeout(tampilkanPopUpUpdate, 500);
             });
         }
