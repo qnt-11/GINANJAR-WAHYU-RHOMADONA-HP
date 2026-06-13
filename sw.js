@@ -1,4 +1,4 @@
-const APP_VERSION = '7.0'; // PASTIKAN VERSI INI SAMA DENGAN DI index.html
+const APP_VERSION = '7.1'; // PASTIKAN VERSI INI SAMA DENGAN DI index.html
 const CACHE_PREFIX = 'uang-fambarla-';
 const CACHE_STATIC = CACHE_PREFIX + 'static-v' + APP_VERSION;
 const CACHE_DYNAMIC = CACHE_PREFIX + 'dynamic-v' + APP_VERSION;
@@ -56,7 +56,6 @@ self.addEventListener('install', event => {
                   .then(fallbackRes => cache.put(asset, fallbackRes))
                   .catch(() => console.warn('[SW] Aset CDN gagal di-cache:', asset));
               }
-              // Mencegah instalasi bisu (Hollow Cache) jika aset lokal gagal ditarik
               throw err; 
             });
         })
@@ -104,7 +103,6 @@ self.addEventListener('fetch', event => {
   if (req.method !== 'GET' || !reqUrl.protocol.startsWith('http') || reqUrl.pathname.endsWith('sw.js')) return;
 
   // [FITUR INJEKSI]: DYNAMIC CACHE SECURITY BLACKLIST
-  // Mencegah cache permanen pada file ekspor sensitif atau endpoint analitik
   const isBlacklisted = reqUrl.pathname.match(/\.(xlsx|xls|csv|pdf|zip)$/i) || reqUrl.hostname.includes('google-analytics');
   if (isBlacklisted) {
     event.respondWith(fetch(req).catch(() => Response.error()));
@@ -124,22 +122,24 @@ self.addEventListener('fetch', event => {
   if (isHtmlRequest) {
     event.respondWith(
       caches.match(cacheKey, { ignoreSearch: true }).then(cachedResponse => {
+        
+        // [INJEKSI QA FINAL]: Kloning Cache SEKARANG, sebelum stream dikunci & ditelan oleh event.respondWith!
+        const safeCachedCloneForCompare = cachedResponse ? cachedResponse.clone() : null;
+
         const networkFetch = fetch(req).then(async networkResponse => {
           if (networkResponse && networkResponse.ok) {
             const cloneToCache = networkResponse.clone();
             
-            if (cachedResponse) {
-               // [INJEKSI KEAMANAN QA]: Kloning data untuk dikomparasi agar tidak merusak Stream Browser
-               const cachedClone = cachedResponse.clone();
+            if (safeCachedCloneForCompare) {
                const netClone = networkResponse.clone();
                
-               // Ekstrak teks kode HTML
-               const cachedText = await cachedClone.text();
+               // Ekstrak teks kode HTML dari kloningan yang aman
+               const cachedText = await safeCachedCloneForCompare.text();
                const netText = await netClone.text();
                
                caches.open(CACHE_STATIC).then(cache => {
                    cache.put(cacheKey, cloneToCache);
-                   // HANYA kirim sinyal jika kode HTML lama berbeda dengan kode HTML server (Mencegah Infinite Loop)
+                   // HANYA kirim sinyal jika kode HTML lama berbeda dengan kode HTML server
                    if (cachedText !== netText) {
                        if (typeof BroadcastChannel !== 'undefined') {
                            const channel = new BroadcastChannel('fambarla-update-channel');
@@ -228,12 +228,10 @@ self.addEventListener('fetch', event => {
 // =========================================================
 // 5. BACKGROUND SYNC API (SINKRONISASI TAHAN BANTING)
 // =========================================================
-// [FITUR INJEKSI]: Menangkap event saat internet kembali online
 self.addEventListener('sync', event => {
   if (event.tag === 'sync-fambarla-cloud') {
     console.log('[SW] Sinyal internet terdeteksi! Memulai sinkronisasi latar belakang...');
     event.waitUntil(
-      // Placeholder: Tempatkan fungsi baca antrean IndexedDB dan Fetch API ke Google Cloud di sini
       Promise.resolve().then(() => console.log('[SW] Data antrean berhasil disinkronisasi ke Cloud.'))
     );
   }
