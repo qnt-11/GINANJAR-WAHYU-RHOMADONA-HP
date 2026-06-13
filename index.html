@@ -981,7 +981,7 @@
 </div>
 <input type="file" id="file-import" accept=".xlsx, .xls" class="hidden" onchange="importFromExcel(event)">
 <script>
-    const APP_VERSION = "6.9"; 
+    const APP_VERSION = "7.0"; 
     const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzR3ufkrRinfGfNNZ2ofyokNz561eDJ-DmrODIc8ocbtU5Q1B8zn4Hw17qbhlA4Ycsd/exec";
     const CLOUD_TOKEN = "Rahas1aFambarLa2026";
     const PIN_DARURAT = "170823";
@@ -1096,39 +1096,42 @@
     };
     // =========================================================
 
-        try {
+            // =========================================================
+    // [INJEKSI QA FINAL]: OMNI-ANTENNA UPDATE SENSOR (Anti Skip-Waiting)
+    // =========================================================
+    let isUpdatePopupShown = false; // Mencegah pop-up ganda jika kedua antena menangkap sinyal
+    
+    function tampilkanPopUpUpdate() {
+        if (isUpdatePopupShown) return;
+        isUpdatePopupShown = true;
+        if (typeof showPopup === 'function') {
+            showPopup('alert', "Versi baru aplikasi tersedia!\n\nPembaruan sistem telah diunduh. Silakan tekan OK untuk memuat ulang.", "var(--cloud)", () => {
+                window.location.reload();
+            }, null, false, true);
+        }
+    }
+
+    try {
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js').then(reg => {
-                // [INJEKSI QA 1]: Antena Hard Update (Mendeteksi perubahan versi di sw.js)
-                reg.addEventListener('updatefound', () => {
-                    const newWorker = reg.installing;
-                    newWorker.addEventListener('statechange', () => {
-                        // Memastikan ini adalah update, bukan instalasi pertama kali
-                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            setTimeout(() => {
-                                showPopup('alert', "Versi aplikasi terbaru (v" + APP_VERSION + ") tersedia!\n\nPembaruan sistem inti telah diunduh. Silakan tekan OK untuk memuat ulang.", "var(--cloud)", () => {
-                                    window.location.reload();
-                                }, null, false, true); 
-                            }, 1000);
-                        }
-                    });
-                });
-            }).catch(() => {});
+            navigator.serviceWorker.register('./sw.js').catch(() => {});
+            
+            // ANTENA 1 (HARD UPDATE): Mendeteksi saat Service Worker baru (yang agresif) selesai mengambil alih halaman
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                setTimeout(tampilkanPopUpUpdate, 500);
+            });
         }
     } catch (e) {}
 
-        // [INJEKSI QA 2]: Antena Soft Update (Menangkap pembaruan UI ringan dari BroadcastChannel)
+    // ANTENA 2 (SOFT UPDATE): Mendeteksi sinyal teks beda dari BroadcastChannel
     if ('BroadcastChannel' in window) {
         const updateChannel = new BroadcastChannel('fambarla-update-channel');
-                updateChannel.onmessage = (event) => {
+        updateChannel.onmessage = (event) => {
             if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
-                // BUG FIXED: Menggunakan pop-up penahan (blocking) agar tidak me-reload paksa saat user sedang input data
-                showPopup('alert', "Versi baru aplikasi tersedia!\n\nPembaruan telah diunduh. Silakan tekan OK untuk memuat ulang sistem.", "var(--cloud)", () => {
-                    window.location.reload();
-                }, null, false, true); // [INJEKSI QA]: Parameter 'true' di akhir memicu status Kritis
+                tampilkanPopUpUpdate();
             }
         };
     }
+    // =========================================================
     
     let AppState = {
         db: { income: [], expense: [], mutations: [], plots: [], pengingat: [], hutang: [], piutang: [], spaylater: [], spinjam: [] },
