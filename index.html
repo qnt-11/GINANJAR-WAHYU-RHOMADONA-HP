@@ -981,7 +981,7 @@
 </div>
 <input type="file" id="file-import" accept=".xlsx, .xls" class="hidden" onchange="importFromExcel(event)">
 <script>
-    const APP_VERSION = "7.0"; 
+    const APP_VERSION = "7.1"; 
     const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzR3ufkrRinfGfNNZ2ofyokNz561eDJ-DmrODIc8ocbtU5Q1B8zn4Hw17qbhlA4Ycsd/exec";
     const CLOUD_TOKEN = "Rahas1aFambarLa2026";
     const PIN_DARURAT = "170823";
@@ -1185,8 +1185,12 @@
     }
 
     function tutupModalAman(modalId) {
-        const modal = document.getElementById(modalId);
-        if(modal) modal.classList.add('hidden');
+    // [INJEKSI QA FINAL]: Hard-Guard Firewall. Tolak perintah tutup dari background jika pop-up kritis aktif!
+    if (modalId === 'custom-modal' && typeof isSystemLockedByCriticalPopup !== 'undefined' && isSystemLockedByCriticalPopup) return;
+
+    const modal = document.getElementById(modalId);
+    if(modal) modal.classList.add('hidden');
+    // ...
         
         setTimeout(() => {
             const openModals = document.querySelectorAll('.modal-overlay:not(.hidden)');
@@ -1520,12 +1524,12 @@
         input.classList.add('hidden'); btnBatal.classList.add('hidden'); btnOk.classList.add('hidden'); if(loader) loader.classList.add('hidden');
         input.value = ''; input.oninput = null; btnOk.onclick = null; btnBatal.onclick = null;
 
-        const closeFunc = () => { 
-            input.type = 'text'; 
-            tutupModalAman('custom-modal'); 
-            // [INJEKSI QA]: Lepaskan kunci sistem saat pop-up ditutup
-            if (isCritical) isSystemLockedByCriticalPopup = false; 
-        };
+        const closeFunc = () => {
+    input.type = 'text';
+    // [INJEKSI QA FINAL]: Lepaskan kunci sistem LEBIH AWAL sebelum penutupan modal
+    if (isCritical) isSystemLockedByCriticalPopup = false; 
+    tutupModalAman('custom-modal');
+};
         const wrapCallback = (val) => { btnOk.disabled = true; setTimeout(() => { if (btnOk) btnOk.disabled = false; }, 1500); closeFunc(); if(callback) callback(val); };
 
         if (mode === 'loading') { if(loader) loader.classList.remove('hidden'); } 
@@ -3221,11 +3225,16 @@
                 inisiasiKalenderAwal(); updatePlotList(); updateRekap(); updateWalletDropdownBalances(); jalankanJam(); cekNotifikasiJatuhTempo(); showPage(null, 'pemasukan', 0); terapkanVersi(); 
             } catch(e) {}
 
-            const loader = document.getElementById('modal-loader');
-            if (loader && !loader.classList.contains('hidden')) { tutupModalAman('custom-modal'); }
-            
-            // Jaminan Mutlak QA 2: Paksa lepaskan kunci layar (Deadlock) yang tersangkut
-            setTimeout(() => { document.body.classList.remove('modal-open'); }, 150);
+                    const loader = document.getElementById('modal-loader');
+        // [INJEKSI QA FINAL]: Cegah trigger penutup jika sistem terkunci oleh Pop-Up Kritis
+        if (loader && !loader.classList.contains('hidden') && !isSystemLockedByCriticalPopup) { tutupModalAman('custom-modal'); }
+
+                // Jaminan Mutlak QA 2: Paksa lepaskan kunci layar (Deadlock) yang tersangkut
+        setTimeout(() => { 
+            // [INJEKSI QA FINAL]: Jangan lepaskan kuncian UI background jika Pop-up Kritis sedang tampil!
+            if (typeof isSystemLockedByCriticalPopup !== 'undefined' && isSystemLockedByCriticalPopup) return;
+            document.body.classList.remove('modal-open'); 
+        }, 150);
         }
     });
 </script>
